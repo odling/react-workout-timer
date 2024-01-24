@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   Navbar,
   NavbarBrand,
@@ -9,29 +9,29 @@ import {
   NavbarMenuToggle,
   NavbarMenu,
   NavbarMenuItem,
-} from "@nextui-org/react";
+} from '@nextui-org/react';
 
-export function MainLayout() {
+const MainLayout = () => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
   const menuItems = [
-    "Profile",
-    "Dashboard",
-    "Activity",
-    "Analytics",
-    "System",
-    "Deployments",
-    "My Settings",
-    "Team Settings",
-    "Help & Feedback",
-    "Log Out",
+    'Profile',
+    'Dashboard',
+    'Activity',
+    'Analytics',
+    'System',
+    'Deployments',
+    'My Settings',
+    'Team Settings',
+    'Help & Feedback',
+    'Log Out',
   ];
 
   return (
     <Navbar onMenuOpenChange={setIsMenuOpen}>
       <NavbarContent>
         <NavbarMenuToggle
-          aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+          aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
           className="sm:hidden"
         />
         <NavbarBrand>
@@ -72,11 +72,7 @@ export function MainLayout() {
           <NavbarMenuItem key={`${item}-${index}`}>
             <Link
               color={
-                index === 2
-                  ? "primary"
-                  : index === menuItems.length - 1
-                  ? "danger"
-                  : "foreground"
+                index === 2 ? 'primary' : index === menuItems.length - 1 ? 'danger' : 'foreground'
               }
               className="w-full"
               href="#"
@@ -89,4 +85,6 @@ export function MainLayout() {
       </NavbarMenu>
     </Navbar>
   );
-}
+};
+
+export default MainLayout;

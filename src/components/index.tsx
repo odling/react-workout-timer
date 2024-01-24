@@ -1,1 +1,3 @@
-export * from "./MainLayout/MainLayout.component";
+import MainLayout from './MainLayout/MainLayout.component';
+
+export default MainLayout;
