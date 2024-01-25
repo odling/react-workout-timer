@@ -1,12 +1,8 @@
-import './App.css';
-import MainLayout from './components';
+import { RouterProvider } from 'react-router-dom';
+import { appRouter } from './config/routes';
 
 function App() {
-  return (
-    <>
-      <MainLayout />
-    </>
-  );
+  return <RouterProvider router={appRouter} />;
 }
 
 export default App;
