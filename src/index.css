@@ -3,12 +3,11 @@
 @tailwind utilities;
 
 @layer base {
-  * {
-    @apply overscroll-none;
+  html {
+    @apply h-full overflow-hidden;
   }
-  html,
   body,
   #root {
-    @apply h-full overscroll-y-none;
+    @apply h-full;
   }
 }
