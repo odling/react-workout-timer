@@ -93,12 +93,12 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
           onClick={handleClick}
           aria-label="Remaining duration"
           classNames={{
-            svg: 'w-full h-full drop-shadow-md stroke-1',
+            svg: `w-full h-full drop-shadow-md stroke-1 scale-x-flip`,
             track: 'stroke-white/10',
             value: 'text-2xl md:text-3xl font-semibold text-foreground',
           }}
           color={!isRunning ? 'default' : type === 'break' ? 'primary' : 'danger'}
-          value={(duration - countdown) / duration}
+          value={countdown / duration}
           valueLabel={
             isPaused || (!isRunning && type !== 'break') ? (
               <p className="w-full h-full text-foreground text-2xl font-medium italic flex items-center justify-center">
@@ -110,6 +110,7 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
           }
           maxValue={1}
           showValueLabel
+          disableAnimation={!isRunning}
         />
       </div>
       <div className="w-full h-20 md:w-60 lg:w-64 flex items-end">
