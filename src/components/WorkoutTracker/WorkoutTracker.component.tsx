@@ -11,10 +11,21 @@ const exercisePrepDuration = 2000;
 
 const WorkoutTracker = (props: IWorkoutTrackerProps) => {
   const { data } = { ...defaultProps, ...props };
-  const [exerciseIndex, setExerciseIndex] = useState(0);
   const exercises = data.items;
+
+  const [isStarted, setIsStarted] = useState(false);
+  const handleStartWorkout = useCallback(() => {
+    setIsStarted(true);
+  }, []);
+  const [exerciseIndex, setExerciseIndex] = useState(0);
   const { duration, name, type } = exercises[exerciseIndex] ?? {};
-  const [playExerciseStartSound] = useSound(exerciseStartSound);
+  const isFinished = exerciseIndex === exercises.length;
+
+  const [isStartSoundLoaded, setIsStartSoundLoaded] = useState(false);
+  const handleStartSoundLoaded = useCallback(() => {
+    setIsStartSoundLoaded(true);
+  }, []);
+  const [playExerciseStartSound] = useSound(exerciseStartSound, { onload: handleStartSoundLoaded });
 
   const { countdown, start, reset, pause, isRunning, isPaused } = useCountdownTimer({
     timer: duration,
@@ -28,11 +39,8 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
   });
 
   const switchTimerRef = useRef<NodeJS.Timeout>();
-
-  const isFinished = exerciseIndex === exercises.length;
-
   useEffect(() => {
-    if (isFinished) return;
+    if (!isStarted || isFinished) return;
     reset();
     switchTimerRef.current = setTimeout(
       () => {
@@ -44,7 +52,7 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
     return () => {
       clearInterval(switchTimerRef.current);
     };
-  }, [exerciseIndex, reset, start, type, playExerciseStartSound, isFinished]);
+  }, [exerciseIndex, reset, start, type, playExerciseStartSound, isFinished, isStarted]);
 
   const handleClick = useCallback(() => {
     if (isPaused) {
@@ -67,7 +75,17 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
     }
   }, [exerciseIndex]);
 
-  return !isFinished ? (
+  return !isStarted ? (
+    <Button
+      disabled={!isStartSoundLoaded}
+      color="success"
+      size="lg"
+      className="text-white font-normal text-lg"
+      onClick={handleStartWorkout}
+    >
+      Start
+    </Button>
+  ) : !isFinished ? (
     <>
       <h2 className="text-foreground font-semibold text-3xl h-20">{isPaused ? 'Paused' : name}</h2>
       <div className="w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 flex justify-center">
@@ -80,7 +98,7 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
             value: 'text-2xl md:text-3xl font-semibold text-foreground',
           }}
           color={!isRunning ? 'default' : type === 'break' ? 'primary' : 'danger'}
-          value={(duration - countdown) / 1000}
+          value={(duration - countdown) / duration}
           valueLabel={
             isPaused || (!isRunning && type !== 'break') ? (
               <p className="w-full h-full text-foreground text-2xl font-medium italic flex items-center justify-center">
@@ -90,7 +108,7 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
               String(countdown / 1000)
             )
           }
-          maxValue={duration / 1000}
+          maxValue={1}
           showValueLabel
         />
       </div>
