@@ -3,6 +3,9 @@
 @tailwind utilities;
 
 @layer base {
+  * {
+    @apply overscroll-none;
+  }
   html,
   body,
   #root {

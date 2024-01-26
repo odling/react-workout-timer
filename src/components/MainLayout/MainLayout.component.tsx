@@ -2,7 +2,7 @@ import { Outlet } from 'react-router-dom';
 
 const MainLayout = () => {
   return (
-    <div className="flex justify-center w-full h-full bg-red-500">
+    <div className="flex justify-center w-full h-full">
       <header></header>
       <main className="container h-full w-full">
         <Outlet />
