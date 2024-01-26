@@ -6,7 +6,9 @@
   html {
     @apply h-full overflow-hidden;
   }
-  body,
+  body {
+    @apply h-full overflow-y-scroll overscroll-y-none;
+  }
   #root {
     @apply h-full;
   }
