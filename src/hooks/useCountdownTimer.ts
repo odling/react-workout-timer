@@ -174,7 +174,7 @@ export default function useCountdownTimer({
       }
     }
 
-    let id: ReturnType<typeof setTimeout>;
+    let id: NodeJS.Timeout;
     if (state.canTick) {
       id = setInterval(tick, interval);
     }

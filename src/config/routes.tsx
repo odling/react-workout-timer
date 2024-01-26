@@ -1,5 +1,5 @@
 import { createBrowserRouter } from 'react-router-dom';
-import MainLayout from '../components';
+import { MainLayout } from '../components';
 import WorkoutPage from '../pages';
 
 export const appRouter = createBrowserRouter([
