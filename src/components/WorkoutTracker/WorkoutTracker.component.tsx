@@ -1,6 +1,6 @@
 import IWorkoutTrackerProps from './WorkoutTracker.interface';
 import { Button, CircularProgress, Progress } from '@nextui-org/react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useCountdownTimer } from '../../hooks';
 import exerciseStartSound from '../../assets/exercise-start.mp3';
 import useSound from 'use-sound';
@@ -13,21 +13,23 @@ const exercisePrepDuration = 2000;
 
 const WorkoutTracker = (props: IWorkoutTrackerProps) => {
   const { data } = { ...defaultProps, ...props };
-  const exerciseList = new Array<IExercise[]>(data.rounds)
-    .fill(data.exercises)
-    .flatMap((exercises, roundIndex) => {
-      if (roundIndex < data.rounds - 1) {
-        return [
-          ...exercises,
-          {
-            type: 'rest',
-            description: `Round ${roundIndex + 1} cleared!`,
-            quantity: data.restBetweenRounds,
-          } as IExercise,
-        ];
-      }
-      return exercises;
-    });
+  const exerciseList = useMemo(
+    () =>
+      new Array<IExercise[]>(data.rounds).fill(data.exercises).flatMap((exercises, roundIndex) => {
+        if (roundIndex < data.rounds - 1) {
+          return [
+            ...exercises,
+            {
+              type: 'rest',
+              description: `Round ${roundIndex + 1} cleared!`,
+              quantity: data.restBetweenRounds,
+            } as IExercise,
+          ];
+        }
+        return exercises;
+      }),
+    [data],
+  );
 
   const [exerciseIndex, setExerciseIndex] = useState(0);
   const currentExercise = exerciseList[exerciseIndex] ?? {};
@@ -50,16 +52,18 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
     [animate],
   );
 
+  const handleExpire = useCallback(async () => {
+    if (exerciseIndex < exerciseList.length) {
+      setExerciseIndex(exerciseIndex + 1);
+      await animateExerciseEnd();
+    }
+  }, [exerciseIndex, exerciseList.length, animateExerciseEnd]);
+
   const { countdown, start, reset, pause, isRunning, isPaused } = useCountdownTimer({
     timer: currentExercise.isRepBased ? 9999 : currentExercise.quantity,
     resetOnExpire: false,
     expireImmediate: false,
-    onExpire: async () => {
-      if (exerciseIndex < exerciseList.length) {
-        setExerciseIndex(exerciseIndex + 1);
-        await animateExerciseEnd();
-      }
-    },
+    onExpire: handleExpire,
   });
 
   const switchTimerRef = useRef<NodeJS.Timeout>();
