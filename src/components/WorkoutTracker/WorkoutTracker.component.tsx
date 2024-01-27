@@ -6,6 +6,7 @@ import exerciseStartSound from '../../assets/exercise-start.mp3';
 import useSound from 'use-sound';
 import ChevronLeft from '../../assets/chevron-left.svg?react';
 import ChevronRight from '../../assets/chevron-right.svg?react';
+import { useAnimate } from 'framer-motion';
 
 const exercisePrepDuration = 2000;
 
@@ -27,13 +28,18 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
   }, []);
   const [playExerciseStartSound] = useSound(exerciseStartSound, { onload: handleStartSoundLoaded });
 
+  const [scope, animate] = useAnimate();
   const { countdown, start, reset, pause, isRunning, isPaused } = useCountdownTimer({
     timer: duration,
     resetOnExpire: false,
     expireImmediate: false,
-    onExpire: () => {
+    onExpire: async () => {
       if (exerciseIndex < exercises.length) {
         setExerciseIndex(exerciseIndex + 1);
+        await animate([
+          ['svg', { opacity: 0, rotateY: 90 }, { duration: 0.35, ease: 'easeIn' }],
+          ['svg', { opacity: 1, rotateY: 180 }, { duration: 0.65, ease: 'easeInOut' }],
+        ]);
       }
     },
   });
@@ -73,7 +79,7 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
     if (exerciseIndex < exercises.length) {
       setExerciseIndex(exerciseIndex + 1);
     }
-  }, [exerciseIndex]);
+  }, [exerciseIndex, exercises.length]);
 
   return !isStarted ? (
     <Button
@@ -88,7 +94,7 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
   ) : !isFinished ? (
     <>
       <h2 className="text-foreground font-semibold text-3xl h-20">{isPaused ? 'Paused' : name}</h2>
-      <div className="w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 flex justify-center">
+      <div className="w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 flex justify-center" ref={scope}>
         <CircularProgress
           onClick={handleClick}
           aria-label="Remaining duration"
@@ -101,16 +107,17 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
           value={countdown / duration}
           valueLabel={
             isPaused || (!isRunning && type !== 'break') ? (
-              <p className="w-full h-full text-foreground text-2xl font-medium italic flex items-center justify-center">
+              <p className="w-full h-full text-foreground text-2xl font-medium italic flex items-center justify-center select-none">
                 {isPaused ? 'Tap to continue' : 'Get ready!'}
               </p>
             ) : (
-              String(countdown / 1000)
+              <p className="w-full h-full text-foreground text-3xl font-medium flex items-center justify-center select-none">
+                {String(countdown / 1000)}
+              </p>
             )
           }
           maxValue={1}
           showValueLabel
-          disableAnimation={!isRunning}
         />
       </div>
       <div className="w-full h-20 md:w-60 lg:w-64 flex items-end">

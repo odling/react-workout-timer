@@ -81,7 +81,7 @@ export interface ICountdownTimerParams {
   /**
    * Callback fired on countdown expiration.
    */
-  onExpire?: () => void;
+  onExpire?: () => void | Promise<void>;
   /**
    * Callback fired when countdown is reset, either by setting resetOnExpire to true
    * or explicitly calling the reset method.
@@ -158,7 +158,7 @@ export default function useCountdownTimer({
   const expire = useCallback(() => {
     initStopped(resetOnExpire ? timer : 0);
     if (onExpire && typeof onExpire === 'function') {
-      onExpire();
+      void onExpire();
     }
   }, [timer, onExpire, resetOnExpire, initStopped]);
 
