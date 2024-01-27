@@ -86,21 +86,15 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
     isStartSoundLoaded,
   ]);
 
-  const checkIsRestingBetweenRounds = useCallback(
-    (index: number, numberOfExercisesInRound: number) => {
-      return (index + 1) % (numberOfExercisesInRound + 1) === 0;
-    },
-    [],
-  );
-
   const handlePreviousClick = useCallback(() => {
     if (exerciseIndex <= 0) return;
-    if (checkIsRestingBetweenRounds(exerciseIndex - 1, data.exercises.length)) {
+    /** if previous exercise is a rest between rounds */
+    if (exerciseIndex % (data.exercises.length + 1) === 0) {
       setExerciseIndex(exerciseIndex - 2);
     } else {
       setExerciseIndex(exerciseIndex - 1);
     }
-  }, [exerciseIndex, checkIsRestingBetweenRounds, data.exercises.length]);
+  }, [exerciseIndex, data.exercises.length]);
 
   const handleNextClick = useCallback(() => {
     if (exerciseIndex >= exerciseList.length) return;
@@ -132,17 +126,23 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
 
   return !isFinished ? (
     <>
-      <div className="h-20 flex flex-col justify-between items-center">
-        {!checkIsRestingBetweenRounds(exerciseIndex, data.exercises.length) && (
+      <div className="h-24 flex flex-col justify-between items-center pb-4">
+        {(exerciseIndex + 1) % (data.exercises.length + 1) !== 0 && (
           <p className="text-foreground font-medium text-lg">{`Round ${currentRound}`}</p>
         )}
         <h2 className="text-foreground font-semibold text-3xl mt-auto">
           {isPaused ? 'Paused' : currentExercise.description}
         </h2>
       </div>
-      <div className="w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 flex justify-center" ref={scope}>
+      <Button
+        isIconOnly
+        variant="bordered"
+        disableRipple
+        className="w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 flex justify-center p-0 border-none"
+        onPress={() => void handleClick()}
+      >
         <CircularProgress
-          onClick={() => void handleClick()}
+          ref={scope}
           aria-label="Remaining duration"
           classNames={{
             svg: `w-full h-full drop-shadow-md stroke-1 scale-x-flip`,
@@ -167,24 +167,26 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
           maxValue={1}
           showValueLabel
         />
-      </div>
-      <div className="w-full h-20 md:w-60 lg:w-64 flex items-end">
+      </Button>
+      <div className="w-full h-24 md:w-60 lg:w-64 flex items-end">
         <div className="flex items-center w-full gap-unit-sm">
-          <Button variant="light" isIconOnly onClick={handlePreviousClick}>
+          <Button
+            variant="light"
+            isIconOnly
+            onPress={handlePreviousClick}
+            isDisabled={exerciseIndex === 0}
+          >
             <ChevronLeft className="h-unit-md w-unit-md fill-foreground" />
           </Button>
-          {exerciseList.map((_exercise, index) => (
-            <Progress
-              key={String(index)}
-              aria-label="Loading..."
-              color={isPaused ? 'default' : 'secondary'}
-              value={index < exerciseIndex ? 1 : 0}
-              maxValue={1}
-              className="max-w-md"
-              size="sm"
-            />
-          ))}
-          <Button variant="light" isIconOnly onClick={handleNextClick}>
+          <Progress
+            aria-label="Loading..."
+            color={!isRunning ? 'default' : currentExercise.type === 'rest' ? 'primary' : 'danger'}
+            value={exerciseIndex / exerciseList.length}
+            maxValue={1}
+            className="max-w-md"
+            size="md"
+          />
+          <Button variant="light" isIconOnly onPress={handleNextClick}>
             <ChevronRight className="h-unit-md w-unit-md fill-foreground" />
           </Button>
         </div>

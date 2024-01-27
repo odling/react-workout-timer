@@ -62,7 +62,7 @@ const WorkoutPage = () => {
             color="success"
             size="lg"
             className="text-white font-normal text-lg"
-            onClick={handleStartWorkout}
+            onPress={handleStartWorkout}
           >
             Start
           </Button>
