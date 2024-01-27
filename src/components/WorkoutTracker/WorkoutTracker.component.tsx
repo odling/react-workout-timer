@@ -86,6 +86,13 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
     isStartSoundLoaded,
   ]);
 
+  const checkIsRestingBetweenRounds = useCallback(
+    (index: number, numberOfExercisesInRound: number) => {
+      return (index + 1) % (numberOfExercisesInRound + 1) === 0;
+    },
+    [],
+  );
+
   const handlePreviousClick = useCallback(() => {
     if (exerciseIndex <= 0) return;
     if (checkIsRestingBetweenRounds(exerciseIndex - 1, data.exercises.length)) {
@@ -93,7 +100,7 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
     } else {
       setExerciseIndex(exerciseIndex - 1);
     }
-  }, [exerciseIndex]);
+  }, [exerciseIndex, checkIsRestingBetweenRounds, data.exercises.length]);
 
   const handleNextClick = useCallback(() => {
     if (exerciseIndex >= exerciseList.length) return;
@@ -122,13 +129,6 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
     animateExerciseEnd,
     reset,
   ]);
-
-  const checkIsRestingBetweenRounds = useCallback(
-    (index: number, numberOfExercisesInRound: number) => {
-      return (index + 1) % (numberOfExercisesInRound + 1) === 0;
-    },
-    [],
-  );
 
   return !isFinished ? (
     <>
