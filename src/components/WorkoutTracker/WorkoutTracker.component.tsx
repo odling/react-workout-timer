@@ -8,7 +8,9 @@ import ChevronLeft from '../../assets/chevron-left.svg?react';
 import ChevronRight from '../../assets/chevron-right.svg?react';
 import { useAnimate } from 'framer-motion';
 import { IExercise } from '../../types';
+import NoSleep from 'nosleep.js';
 
+const noSleep = new NoSleep();
 const exercisePrepDuration = 2000;
 
 const WorkoutTracker = (props: IWorkoutTrackerProps) => {
@@ -127,6 +129,18 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
     animateExerciseEnd,
     reset,
   ]);
+
+  useEffect(() => {
+    const handleStayAwake = async () => {
+      await noSleep.enable();
+    };
+    void handleStayAwake();
+    window.addEventListener('blur', pause);
+    return () => {
+      noSleep.disable();
+      window.removeEventListener('blur', pause);
+    };
+  }, [pause]);
 
   return !isFinished ? (
     <>

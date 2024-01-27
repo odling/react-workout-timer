@@ -22,7 +22,6 @@ const workout: IWorkout = {
       type: 'exercise',
       description: 'Squats',
       quantity: 3,
-      isRepBased: true,
     },
     {
       type: 'rest',
