@@ -7,16 +7,32 @@ import useSound from 'use-sound';
 import ChevronLeft from '../../assets/chevron-left.svg?react';
 import ChevronRight from '../../assets/chevron-right.svg?react';
 import { useAnimate } from 'framer-motion';
+import { IExercise } from '../../types';
 
 const exercisePrepDuration = 2000;
 
 const WorkoutTracker = (props: IWorkoutTrackerProps) => {
   const { data } = { ...defaultProps, ...props };
-  const exercises = data.exercises;
+  const exerciseList = new Array<IExercise[]>(data.rounds)
+    .fill(data.exercises)
+    .flatMap((exercises, roundIndex) => {
+      if (roundIndex < data.rounds - 1) {
+        return [
+          ...exercises,
+          {
+            type: 'rest',
+            description: `Round ${roundIndex + 1} cleared!`,
+            quantity: data.restBetweenRounds,
+          } as IExercise,
+        ];
+      }
+      return exercises;
+    });
 
   const [exerciseIndex, setExerciseIndex] = useState(0);
-  const { quantity, description, type, repBased } = exercises[exerciseIndex] ?? {};
-  const isFinished = exerciseIndex === exercises.length;
+  const currentExercise = exerciseList[exerciseIndex] ?? {};
+  const currentRound = Math.floor(exerciseIndex / (data.exercises.length + 1)) + 1;
+  const isFinished = exerciseIndex === exerciseList.length;
 
   const [isStartSoundLoaded, setIsStartSoundLoaded] = useState(false);
   const handleStartSoundLoaded = useCallback(() => {
@@ -35,11 +51,11 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
   );
 
   const { countdown, start, reset, pause, isRunning, isPaused } = useCountdownTimer({
-    timer: repBased ? 9999 : quantity,
+    timer: currentExercise.isRepBased ? 9999 : currentExercise.quantity,
     resetOnExpire: false,
     expireImmediate: false,
     onExpire: async () => {
-      if (exerciseIndex < exercises.length) {
+      if (exerciseIndex < exerciseList.length) {
         setExerciseIndex(exerciseIndex + 1);
         await animateExerciseEnd();
       }
@@ -53,33 +69,43 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
     switchTimerRef.current = setTimeout(
       () => {
         start();
-        isStartSoundLoaded && type === 'exercise' && playExerciseStartSound();
+        isStartSoundLoaded && currentExercise.type === 'exercise' && playExerciseStartSound();
       },
-      type === 'exercise' ? exercisePrepDuration : 0,
+      currentExercise.type === 'exercise' ? exercisePrepDuration : 0,
     );
     return () => {
       clearInterval(switchTimerRef.current);
     };
-  }, [exerciseIndex, reset, start, type, playExerciseStartSound, isFinished, isStartSoundLoaded]);
+  }, [
+    exerciseIndex,
+    reset,
+    start,
+    currentExercise.type,
+    playExerciseStartSound,
+    isFinished,
+    isStartSoundLoaded,
+  ]);
 
   const handlePreviousClick = useCallback(() => {
-    if (exerciseIndex > 0) {
+    if (exerciseIndex <= 0) return;
+    if (checkIsRestingBetweenRounds(exerciseIndex - 1, data.exercises.length)) {
+      setExerciseIndex(exerciseIndex - 2);
+    } else {
       setExerciseIndex(exerciseIndex - 1);
     }
   }, [exerciseIndex]);
 
   const handleNextClick = useCallback(() => {
-    if (exerciseIndex < exercises.length) {
-      setExerciseIndex(exerciseIndex + 1);
-    }
-  }, [exerciseIndex, exercises.length]);
+    if (exerciseIndex >= exerciseList.length) return;
+    setExerciseIndex(exerciseIndex + 1);
+  }, [exerciseIndex, exerciseList.length]);
 
   const handleClick = useCallback(async () => {
     if (isPaused) {
       start();
       return;
     }
-    if (repBased) {
+    if (currentExercise.isRepBased) {
       reset();
       handleNextClick();
       await animateExerciseEnd();
@@ -87,13 +113,33 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
     }
     pause();
     clearTimeout(switchTimerRef.current);
-  }, [isPaused, pause, start, repBased, handleNextClick, animateExerciseEnd, reset]);
+  }, [
+    isPaused,
+    pause,
+    start,
+    currentExercise.isRepBased,
+    handleNextClick,
+    animateExerciseEnd,
+    reset,
+  ]);
+
+  const checkIsRestingBetweenRounds = useCallback(
+    (index: number, numberOfExercisesInRound: number) => {
+      return (index + 1) % (numberOfExercisesInRound + 1) === 0;
+    },
+    [],
+  );
 
   return !isFinished ? (
     <>
-      <h2 className="text-foreground font-semibold text-3xl h-20">
-        {isPaused ? 'Paused' : description}
-      </h2>
+      <div className="h-20 flex flex-col justify-between items-center">
+        {!checkIsRestingBetweenRounds(exerciseIndex, data.exercises.length) && (
+          <p className="text-foreground font-medium text-lg">{`Round ${currentRound}`}</p>
+        )}
+        <h2 className="text-foreground font-semibold text-3xl mt-auto">
+          {isPaused ? 'Paused' : currentExercise.description}
+        </h2>
+      </div>
       <div className="w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 flex justify-center" ref={scope}>
         <CircularProgress
           onClick={() => void handleClick()}
@@ -103,16 +149,18 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
             track: 'stroke-white/10',
             value: 'text-2xl md:text-3xl font-semibold text-foreground',
           }}
-          color={!isRunning ? 'default' : type === 'rest' ? 'primary' : 'danger'}
-          value={repBased ? 1 : countdown / quantity}
+          color={!isRunning ? 'default' : currentExercise.type === 'rest' ? 'primary' : 'danger'}
+          value={currentExercise.isRepBased ? 1 : countdown / currentExercise.quantity}
           valueLabel={
-            isPaused || (!isRunning && type !== 'rest') ? (
+            isPaused || (!isRunning && currentExercise.type !== 'rest') ? (
               <p className="w-full h-full text-foreground text-2xl font-medium italic flex items-center justify-center select-none">
                 {isPaused ? 'Tap to continue' : 'Get ready!'}
               </p>
             ) : (
               <p className="w-full h-full text-foreground text-3xl font-medium flex items-center justify-center select-none">
-                {repBased ? `${quantity} reps` : String(countdown)}
+                {currentExercise.isRepBased
+                  ? `${currentExercise.quantity} reps`
+                  : String(countdown)}
               </p>
             )
           }
@@ -125,7 +173,7 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
           <Button variant="light" isIconOnly onClick={handlePreviousClick}>
             <ChevronLeft className="h-unit-md w-unit-md fill-foreground" />
           </Button>
-          {exercises.map((_exercise, index) => (
+          {exerciseList.map((_exercise, index) => (
             <Progress
               key={String(index)}
               aria-label="Loading..."

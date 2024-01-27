@@ -2,7 +2,7 @@ export interface IExercise {
   type: 'exercise' | 'rest';
   description: string;
   quantity: number;
-  repBased?: boolean;
+  isRepBased?: boolean;
 }
 
 export interface IWorkout {

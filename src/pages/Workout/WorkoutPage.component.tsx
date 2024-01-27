@@ -4,7 +4,7 @@ import { IWorkout } from '../../types';
 import { Button } from '@nextui-org/react';
 
 const workout: IWorkout = {
-  rounds: 1,
+  rounds: 3,
   restBetweenRounds: 5,
   description: 'test',
   exercises: [
@@ -22,7 +22,7 @@ const workout: IWorkout = {
       type: 'exercise',
       description: 'Squats',
       quantity: 3,
-      repBased: true,
+      isRepBased: true,
     },
     {
       type: 'rest',
