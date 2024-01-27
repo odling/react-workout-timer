@@ -8,4 +8,6 @@ export interface IExercise {
 export interface IWorkout {
   description: string;
   exercises: IExercise[];
+  rounds: number;
+  restBetweenRounds: number;
 }

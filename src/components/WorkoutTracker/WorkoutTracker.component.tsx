@@ -14,10 +14,6 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
   const { data } = { ...defaultProps, ...props };
   const exercises = data.exercises;
 
-  const [isStarted, setIsStarted] = useState(false);
-  const handleStartWorkout = useCallback(() => {
-    setIsStarted(true);
-  }, []);
   const [exerciseIndex, setExerciseIndex] = useState(0);
   const { quantity, description, type, repBased } = exercises[exerciseIndex] ?? {};
   const isFinished = exerciseIndex === exercises.length;
@@ -52,19 +48,19 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
 
   const switchTimerRef = useRef<NodeJS.Timeout>();
   useEffect(() => {
-    if (!isStarted || isFinished) return;
+    if (isFinished) return;
     reset();
     switchTimerRef.current = setTimeout(
       () => {
         start();
-        playExerciseStartSound();
+        isStartSoundLoaded && type === 'exercise' && playExerciseStartSound();
       },
       type === 'exercise' ? exercisePrepDuration : 0,
     );
     return () => {
       clearInterval(switchTimerRef.current);
     };
-  }, [exerciseIndex, reset, start, type, playExerciseStartSound, isFinished, isStarted]);
+  }, [exerciseIndex, reset, start, type, playExerciseStartSound, isFinished, isStartSoundLoaded]);
 
   const handlePreviousClick = useCallback(() => {
     if (exerciseIndex > 0) {
@@ -93,24 +89,14 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
     clearTimeout(switchTimerRef.current);
   }, [isPaused, pause, start, repBased, handleNextClick, animateExerciseEnd, reset]);
 
-  return !isStarted ? (
-    <Button
-      disabled={!isStartSoundLoaded}
-      color="success"
-      size="lg"
-      className="text-white font-normal text-lg"
-      onClick={handleStartWorkout}
-    >
-      Start
-    </Button>
-  ) : !isFinished ? (
+  return !isFinished ? (
     <>
       <h2 className="text-foreground font-semibold text-3xl h-20">
         {isPaused ? 'Paused' : description}
       </h2>
       <div className="w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 flex justify-center" ref={scope}>
         <CircularProgress
-          onClick={void handleClick}
+          onClick={() => void handleClick()}
           aria-label="Remaining duration"
           classNames={{
             svg: `w-full h-full drop-shadow-md stroke-1 scale-x-flip`,
