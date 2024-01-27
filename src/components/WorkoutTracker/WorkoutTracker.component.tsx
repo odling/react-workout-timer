@@ -12,14 +12,14 @@ const exercisePrepDuration = 2000;
 
 const WorkoutTracker = (props: IWorkoutTrackerProps) => {
   const { data } = { ...defaultProps, ...props };
-  const exercises = data.items;
+  const exercises = data.exercises;
 
   const [isStarted, setIsStarted] = useState(false);
   const handleStartWorkout = useCallback(() => {
     setIsStarted(true);
   }, []);
   const [exerciseIndex, setExerciseIndex] = useState(0);
-  const { duration, name, type } = exercises[exerciseIndex] ?? {};
+  const { quantity, description, type, repBased } = exercises[exerciseIndex] ?? {};
   const isFinished = exerciseIndex === exercises.length;
 
   const [isStartSoundLoaded, setIsStartSoundLoaded] = useState(false);
@@ -29,17 +29,23 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
   const [playExerciseStartSound] = useSound(exerciseStartSound, { onload: handleStartSoundLoaded });
 
   const [scope, animate] = useAnimate();
+  const animateExerciseEnd = useCallback(
+    () =>
+      animate([
+        ['svg', { opacity: 0, rotateY: 90 }, { duration: 0.35, ease: 'easeIn' }],
+        ['svg', { opacity: 1, rotateY: 180 }, { duration: 0.65, ease: 'easeInOut' }],
+      ]),
+    [animate],
+  );
+
   const { countdown, start, reset, pause, isRunning, isPaused } = useCountdownTimer({
-    timer: duration,
+    timer: repBased ? 9999 : quantity,
     resetOnExpire: false,
     expireImmediate: false,
     onExpire: async () => {
       if (exerciseIndex < exercises.length) {
         setExerciseIndex(exerciseIndex + 1);
-        await animate([
-          ['svg', { opacity: 0, rotateY: 90 }, { duration: 0.35, ease: 'easeIn' }],
-          ['svg', { opacity: 1, rotateY: 180 }, { duration: 0.65, ease: 'easeInOut' }],
-        ]);
+        await animateExerciseEnd();
       }
     },
   });
@@ -60,15 +66,6 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
     };
   }, [exerciseIndex, reset, start, type, playExerciseStartSound, isFinished, isStarted]);
 
-  const handleClick = useCallback(() => {
-    if (isPaused) {
-      start();
-    } else {
-      pause();
-      clearTimeout(switchTimerRef.current);
-    }
-  }, [isPaused, pause, start]);
-
   const handlePreviousClick = useCallback(() => {
     if (exerciseIndex > 0) {
       setExerciseIndex(exerciseIndex - 1);
@@ -80,6 +77,21 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
       setExerciseIndex(exerciseIndex + 1);
     }
   }, [exerciseIndex, exercises.length]);
+
+  const handleClick = useCallback(async () => {
+    if (isPaused) {
+      start();
+      return;
+    }
+    if (repBased) {
+      reset();
+      handleNextClick();
+      await animateExerciseEnd();
+      return;
+    }
+    pause();
+    clearTimeout(switchTimerRef.current);
+  }, [isPaused, pause, start, repBased, handleNextClick, animateExerciseEnd, reset]);
 
   return !isStarted ? (
     <Button
@@ -93,26 +105,28 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
     </Button>
   ) : !isFinished ? (
     <>
-      <h2 className="text-foreground font-semibold text-3xl h-20">{isPaused ? 'Paused' : name}</h2>
+      <h2 className="text-foreground font-semibold text-3xl h-20">
+        {isPaused ? 'Paused' : description}
+      </h2>
       <div className="w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 flex justify-center" ref={scope}>
         <CircularProgress
-          onClick={handleClick}
+          onClick={void handleClick}
           aria-label="Remaining duration"
           classNames={{
             svg: `w-full h-full drop-shadow-md stroke-1 scale-x-flip`,
             track: 'stroke-white/10',
             value: 'text-2xl md:text-3xl font-semibold text-foreground',
           }}
-          color={!isRunning ? 'default' : type === 'break' ? 'primary' : 'danger'}
-          value={countdown / duration}
+          color={!isRunning ? 'default' : type === 'rest' ? 'primary' : 'danger'}
+          value={repBased ? 1 : countdown / quantity}
           valueLabel={
-            isPaused || (!isRunning && type !== 'break') ? (
+            isPaused || (!isRunning && type !== 'rest') ? (
               <p className="w-full h-full text-foreground text-2xl font-medium italic flex items-center justify-center select-none">
                 {isPaused ? 'Tap to continue' : 'Get ready!'}
               </p>
             ) : (
               <p className="w-full h-full text-foreground text-3xl font-medium flex items-center justify-center select-none">
-                {String(countdown / 1000)}
+                {repBased ? `${quantity} reps` : String(countdown)}
               </p>
             )
           }

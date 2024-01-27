@@ -1,42 +1,44 @@
 import { WorkoutTracker } from '../../components';
+import { IWorkout } from '../../types';
 
-const workout = {
-  name: 'test',
-  items: [
+const workout: IWorkout = {
+  description: 'test',
+  exercises: [
     {
       type: 'exercise',
-      name: 'High Knees',
-      duration: 3000,
+      description: 'High Knees',
+      quantity: 3,
     },
     {
-      type: 'break',
-      name: 'Rest',
-      duration: 4000,
-    },
-    {
-      type: 'exercise',
-      name: 'Squats',
-      duration: 3000,
-    },
-    {
-      type: 'break',
-      name: 'Rest',
-      duration: 4000,
+      type: 'rest',
+      description: 'Rest',
+      quantity: 4,
     },
     {
       type: 'exercise',
-      name: 'Pushups',
-      duration: 3000,
+      description: 'Squats',
+      quantity: 3,
+      repBased: true,
     },
     {
-      type: 'break',
-      name: 'Rest',
-      duration: 4000,
+      type: 'rest',
+      description: 'Rest',
+      quantity: 4,
     },
     {
       type: 'exercise',
-      name: 'Pullups',
-      duration: 3000,
+      description: 'Pushups',
+      quantity: 3,
+    },
+    {
+      type: 'rest',
+      description: 'Rest',
+      quantity: 4,
+    },
+    {
+      type: 'exercise',
+      description: 'Pullups',
+      quantity: 3,
     },
   ],
 };

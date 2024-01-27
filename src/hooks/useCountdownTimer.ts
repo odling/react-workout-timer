@@ -52,12 +52,12 @@ function reducer(state: IState, action: Actions) {
 
 export interface ICountdownTimerParams {
   /**
-   * Countdown time in milliseconds.
+   * Countdown time in seconds.
    */
   timer: number;
   /**
    * Default: 1000.
-   * Interval between ticks in milliseconds.
+   * Interval between ticks in seconds.
    */
   interval?: number;
   /**
@@ -122,7 +122,7 @@ export interface ICountdownTimerResults {
  */
 export default function useCountdownTimer({
   timer,
-  interval = 1000,
+  interval = 1,
   autostart = false,
   expireImmediate = false,
   resetOnExpire = true,
@@ -164,10 +164,7 @@ export default function useCountdownTimer({
 
   useEffect(() => {
     function tick() {
-      if (
-        state.countdown / 1000 <= 0 ||
-        (expireImmediate && (state.countdown - interval) / 1000 <= 0)
-      ) {
+      if (state.countdown <= 0 || (expireImmediate && state.countdown - interval <= 0)) {
         expire();
       } else {
         dispatch({ type: 'TICK', payload: interval });
@@ -176,7 +173,7 @@ export default function useCountdownTimer({
 
     let id: NodeJS.Timeout;
     if (state.canTick) {
-      id = setInterval(tick, interval);
+      id = setInterval(tick, interval * 1000);
     }
     return () => clearInterval(id);
   }, [
