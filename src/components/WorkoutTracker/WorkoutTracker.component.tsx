@@ -132,7 +132,7 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
 
   useEffect(() => {
     const handleStayAwake = async () => {
-      await noSleep.enable();
+      // await noSleep.enable();
     };
     void handleStayAwake();
     window.addEventListener('blur', pause);
