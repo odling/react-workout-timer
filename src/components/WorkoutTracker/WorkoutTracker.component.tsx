@@ -36,13 +36,14 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
   const [exerciseIndex, setExerciseIndex] = useState(0);
   const currentExercise = exerciseList[exerciseIndex] ?? {};
   const currentRound = Math.floor(exerciseIndex / (data.exercises.length + 1)) + 1;
+  const [isStarted, setIsStarted] = useState(false);
   const isFinished = exerciseIndex === exerciseList.length;
 
-  const [isStartSoundLoaded, setIsStartSoundLoaded] = useState(false);
-  const handleStartSoundLoaded = useCallback(() => {
-    setIsStartSoundLoaded(true);
-  }, []);
-  const [playExerciseStartSound] = useSound(exerciseStartSound, { onload: handleStartSoundLoaded });
+  // const [isStartSoundLoaded, setIsStartSoundLoaded] = useState(false);
+  // const handleStartSoundLoaded = useCallback(() => {
+  //   setIsStartSoundLoaded(true);
+  // }, []);
+  const [playExerciseStartSound] = useSound(exerciseStartSound);
 
   const [scope, animate] = useAnimate();
   const animateExerciseEnd = useCallback(
@@ -70,12 +71,12 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
 
   const switchTimerRef = useRef<NodeJS.Timeout>();
   useEffect(() => {
-    if (isFinished) return;
+    if (!isStarted || isFinished) return;
     reset();
     switchTimerRef.current = setTimeout(
       () => {
         start();
-        isStartSoundLoaded && currentExercise.type === 'exercise' && playExerciseStartSound();
+        currentExercise.type === 'exercise' && playExerciseStartSound();
       },
       currentExercise.type === 'exercise' ? exercisePrepDuration : 0,
     );
@@ -83,13 +84,14 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
       clearInterval(switchTimerRef.current);
     };
   }, [
+    isStarted,
     exerciseIndex,
     reset,
     start,
     currentExercise.type,
     playExerciseStartSound,
     isFinished,
-    isStartSoundLoaded,
+    // isStartSoundLoaded,
   ]);
 
   const handlePreviousClick = useCallback(() => {
@@ -108,6 +110,10 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
   }, [exerciseIndex, exerciseList.length]);
 
   const handleClick = useCallback(async () => {
+    if (!isStarted) {
+      setIsStarted(true);
+      return;
+    }
     if (isPaused) {
       start();
       return;
@@ -121,6 +127,7 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
     pause();
     clearTimeout(switchTimerRef.current);
   }, [
+    isStarted,
     isPaused,
     pause,
     start,
@@ -170,9 +177,9 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
           color={!isRunning ? 'default' : currentExercise.type === 'rest' ? 'primary' : 'danger'}
           value={currentExercise.isRepBased ? 1 : countdown / currentExercise.quantity}
           valueLabel={
-            isPaused || (!isRunning && currentExercise.type !== 'rest') ? (
+            !isStarted || isPaused || (!isRunning && currentExercise.type !== 'rest') ? (
               <p className="w-full h-full text-foreground text-2xl font-medium italic flex items-center justify-center select-none">
-                {isPaused ? 'Tap to continue' : 'Get ready!'}
+                {!isStarted ? 'Tap to start' : isPaused ? 'Tap to continue' : 'Get ready!'}
               </p>
             ) : (
               <p className="w-full h-full text-foreground text-3xl font-medium flex items-center justify-center select-none">
