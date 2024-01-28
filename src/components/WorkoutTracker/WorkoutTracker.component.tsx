@@ -9,9 +9,9 @@ import ChevronLeft from '../../assets/chevron-left.svg?react';
 import ChevronRight from '../../assets/chevron-right.svg?react';
 import { useAnimate } from 'framer-motion';
 import { IExercise } from '../../types';
-// import NoSleep from '@zakj/no-sleep';
+import NoSleep from '@marsgames/nosleep.js';
 
-// const noSleep = new NoSleep();
+const noSleep = new NoSleep(true);
 const exercisePrepDuration = 2000;
 
 const WorkoutTracker = (props: IWorkoutTrackerProps) => {
@@ -136,13 +136,13 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
   ]);
 
   useEffect(() => {
-    const handleStayAwake = () => {
-      // noSleep.enable();
+    const handleStayAwake = async () => {
+      await noSleep.enable();
     };
-    handleStayAwake();
+    void handleStayAwake();
     window.addEventListener('blur', pause);
     return () => {
-      // noSleep.disable();
+      noSleep.disable();
       window.removeEventListener('blur', pause);
     };
   }, [pause]);

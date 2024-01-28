@@ -18,13 +18,12 @@
     ]
   },
   "dependencies": {
+    "@marsgames/nosleep.js": "^0.12.22",
     "@nextui-org/react": "^2.2.9",
-    "@zakj/no-sleep": "^0.13.5",
     "framer-motion": "^10.16.16",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.21.3",
-    "react-use-wake-lock": "^0.0.18",
     "use-sound": "^4.0.1"
   },
   "devDependencies": {

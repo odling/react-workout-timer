@@ -57,14 +57,17 @@ const WorkoutPage = () => {
         {isStarted ? (
           <WorkoutTracker data={workout} />
         ) : (
-          <Button
-            color="success"
-            size="lg"
-            className="text-white font-normal text-lg"
-            onPress={handleStartWorkout}
-          >
-            Start
-          </Button>
+          <>
+            <h2>{workout.description}</h2>
+            <Button
+              color="success"
+              size="lg"
+              className="text-white font-normal text-lg"
+              onPress={handleStartWorkout}
+            >
+              Go to workout
+            </Button>
+          </>
         )}
       </section>
     </div>
