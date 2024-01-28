@@ -6,7 +6,7 @@ import { Button } from '@nextui-org/react';
 const workout: IWorkout = {
   rounds: 3,
   restBetweenRounds: 5,
-  description: 'test',
+  description: 'Week 1 - Lower Body',
   exercises: [
     {
       type: 'exercise',
@@ -46,25 +46,28 @@ const workout: IWorkout = {
   ],
 };
 
+type WorkoutMode = 'idle' | 'workout' | 'warmup';
+
 const WorkoutPage = () => {
-  const [isStarted, setIsStarted] = useState(false);
+  const [mode, setMode] = useState<WorkoutMode>('idle');
+
   const handleStartWorkout = useCallback(() => {
-    setIsStarted(true);
+    setMode('workout');
   }, []);
+
+  const handleFinished = useCallback(() => {
+    setMode('idle');
+  }, []);
+
   return (
     <div className="py-unit-2xl h-full">
-      <section className="h-full flex justify-center items-center flex-col px-unit-md">
-        {isStarted ? (
-          <WorkoutTracker data={workout} />
+      <section className="h-full min-h-[500px] flex justify-center items-center flex-col px-unit-md">
+        {mode === 'workout' ? (
+          <WorkoutTracker data={workout} onFinished={handleFinished} />
         ) : (
           <>
             <h2>{workout.description}</h2>
-            <Button
-              color="success"
-              size="lg"
-              className="text-white font-normal text-lg"
-              onPress={handleStartWorkout}
-            >
+            <Button variant="solid" color="success" size="lg" onPress={handleStartWorkout}>
               Go to workout
             </Button>
           </>

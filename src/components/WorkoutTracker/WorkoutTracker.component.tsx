@@ -15,7 +15,7 @@ const noSleep = new NoSleep(true);
 const exercisePrepDuration = 2000;
 
 const WorkoutTracker = (props: IWorkoutTrackerProps) => {
-  const { data } = { ...defaultProps, ...props };
+  const { data, onFinished } = { ...defaultProps, ...props };
   const exerciseList = useMemo(
     () =>
       new Array<IExercise[]>(data.rounds).fill(data.exercises).flatMap((exercises, roundIndex) => {
@@ -38,7 +38,6 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
   const currentExercise = exerciseList[exerciseIndex] ?? {};
   const currentRound = Math.floor(exerciseIndex / (data.exercises.length + 1)) + 1;
   const [isStarted, setIsStarted] = useState(false);
-  const isFinished = exerciseIndex === exerciseList.length;
 
   const [playExerciseStartSound] = useSound(exerciseStartSound);
   const [playExerciseEndSound] = useSound(exerciseEndSound);
@@ -70,7 +69,7 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
 
   const switchTimerRef = useRef<NodeJS.Timeout>();
   useEffect(() => {
-    if (!isStarted || isPaused || isFinished) return;
+    if (!isStarted) return;
     reset();
     switchTimerRef.current = setTimeout(
       () => {
@@ -82,16 +81,7 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
     return () => {
       clearInterval(switchTimerRef.current);
     };
-  }, [
-    isStarted,
-    isFinished,
-    isPaused,
-    exerciseIndex,
-    reset,
-    start,
-    currentExercise.type,
-    playExerciseStartSound,
-  ]);
+  }, [isStarted, exerciseIndex, reset, start, currentExercise.type, playExerciseStartSound]);
 
   const handlePreviousClick = useCallback(() => {
     if (exerciseIndex <= 0) return;
@@ -148,82 +138,111 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
     };
   }, [pause]);
 
-  return !isFinished ? (
+  return (
     <>
-      <div className="h-24 flex flex-col justify-between items-center pb-4">
-        {(exerciseIndex + 1) % (data.exercises.length + 1) !== 0 && (
-          <p className="text-foreground font-medium text-lg">{`Round ${currentRound}`}</p>
-        )}
-        <h2 className="text-foreground font-semibold text-3xl mt-auto">
-          {isPaused ? 'Paused' : currentExercise.description}
-        </h2>
-      </div>
-      <Button
-        isIconOnly
-        variant="bordered"
-        disableRipple
-        className="w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 flex justify-center p-0 border-none"
-        onPress={() => void handleClick()}
-      >
-        <CircularProgress
-          ref={scope}
-          aria-label="Remaining duration"
-          classNames={{
-            svg: `w-full h-full drop-shadow-md stroke-1 scale-x-flip`,
-            track: 'stroke-white/10',
-            value: 'text-2xl md:text-3xl font-semibold text-foreground',
-          }}
-          color={!isRunning ? 'default' : currentExercise.type === 'rest' ? 'primary' : 'danger'}
-          value={currentExercise.isRepBased ? 1 : countdown / currentExercise.quantity}
-          valueLabel={
-            !isStarted || isPaused || (!isRunning && currentExercise.type !== 'rest') ? (
-              <p className="w-full h-full text-foreground text-2xl font-medium italic flex items-center justify-center select-none">
-                {!isStarted ? 'Tap to start' : isPaused ? 'Tap to continue' : 'Get ready!'}
-              </p>
-            ) : (
-              <p className="w-full h-full text-foreground text-3xl font-medium flex items-center justify-center select-none">
-                {currentExercise.isRepBased
-                  ? `${currentExercise.quantity} reps`
-                  : String(countdown)}
-              </p>
-            )
-          }
-          maxValue={1}
-          showValueLabel
-        />
-      </Button>
-      <div className="w-full h-24 md:w-60 lg:w-64 flex items-end">
+      {exerciseIndex < exerciseList.length ? (
+        <>
+          <div className="h-24 w-64 flex flex-col justify-between items-center pb-4">
+            {(exerciseIndex + 1) % (data.exercises.length + 1) !== 0 && (
+              <p className="text-foreground font-medium text-lg">{`Round ${currentRound}`}</p>
+            )}
+            <h2 className="text-foreground font-semibold text-3xl mt-auto">
+              {isPaused ? 'Paused' : currentExercise.description}
+            </h2>
+          </div>
+          <Button
+            variant="bordered"
+            disableRipple
+            className="w-64 h-64 flex justify-center p-0 border-none"
+            onPress={() => void handleClick()}
+          >
+            <CircularProgress
+              ref={scope}
+              aria-label="Remaining duration"
+              classNames={{
+                svg: `w-full h-full drop-shadow-md stroke-1 scale-x-flip`,
+                track: 'stroke-white/10',
+                value: 'text-2xl md:text-3xl font-semibold text-foreground',
+              }}
+              color={
+                !isRunning ? 'default' : currentExercise.type === 'rest' ? 'primary' : 'danger'
+              }
+              value={currentExercise.isRepBased ? 1 : countdown / currentExercise.quantity}
+              valueLabel={
+                !isStarted || isPaused || (!isRunning && currentExercise.type !== 'rest') ? (
+                  <p className="w-full h-full text-foreground text-2xl font-medium italic flex items-center justify-center select-none">
+                    {!isStarted ? 'Tap to start' : isPaused ? 'Tap to continue' : 'Get ready!'}
+                  </p>
+                ) : (
+                  <p className="w-full h-full text-foreground text-3xl font-medium flex items-center justify-center select-none">
+                    {currentExercise.isRepBased
+                      ? `${currentExercise.quantity} reps`
+                      : String(countdown)}
+                  </p>
+                )
+              }
+              maxValue={1}
+              showValueLabel
+            />
+          </Button>
+        </>
+      ) : (
+        <div className="w-full h-80 mb-8 flex flex-col gap-unit-lg items-center justify-center">
+          <p className="text-foreground text-center text-4xl font-medium">Workout finished!</p>
+          <Button variant="solid" color="success" size="lg" onPress={onFinished}>
+            Go to workout details
+          </Button>
+        </div>
+      )}
+      <div className="w-80 max-w-80 h-24 flex flex-col justify-start items-center">
+        <p className="text-foreground font-medium text-lg">{data.description}</p>
         <div className="flex items-center w-full gap-unit-sm">
           <Button
             variant="light"
             isIconOnly
             onPress={handlePreviousClick}
-            isDisabled={exerciseIndex === 0}
+            isDisabled={!isStarted || exerciseIndex === 0}
           >
             <ChevronLeft className="h-unit-md w-unit-md fill-foreground" />
           </Button>
           <Progress
             aria-label="Loading..."
-            color={!isRunning ? 'default' : currentExercise.type === 'rest' ? 'primary' : 'danger'}
+            color={
+              exerciseIndex === exerciseList.length
+                ? 'success'
+                : !isRunning
+                  ? 'default'
+                  : currentExercise.type === 'rest'
+                    ? 'primary'
+                    : 'danger'
+            }
             value={exerciseIndex / exerciseList.length}
             maxValue={1}
-            className="max-w-md"
             size="md"
           />
-          <Button variant="light" isIconOnly onPress={handleNextClick}>
+          <Button
+            variant="light"
+            isIconOnly
+            onPress={handleNextClick}
+            isDisabled={!isStarted || exerciseIndex === exerciseList.length}
+          >
             <ChevronRight className="h-unit-md w-unit-md fill-foreground" />
           </Button>
         </div>
+        {exerciseIndex < exerciseList.length && (
+          <Button variant="flat" onPress={() => undefined}>
+            Quit
+          </Button>
+        )}
       </div>
     </>
-  ) : (
-    <p className="w-full h-full text-foreground text-4xl font-medium italic flex items-center justify-center">
-      Workout is complete!
-    </p>
   );
 };
 
-const defaultProps = {};
+const defaultProps = {
+  onFinished: () => undefined,
+  onQuit: () => undefined,
+};
 WorkoutTracker.defaultProps = defaultProps;
 
 export default WorkoutTracker;
