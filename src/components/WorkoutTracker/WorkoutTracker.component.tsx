@@ -2,14 +2,14 @@ import IWorkoutTrackerProps from './WorkoutTracker.interface';
 import { Button, CircularProgress, Progress } from '@nextui-org/react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useCountdownTimer } from '../../hooks';
-import exerciseStartSound from '../../assets/exercise-start.mp3';
-import exerciseEndSound from '../../assets/exercise-end.mp3';
 import useSound from 'use-sound';
-import ChevronLeft from '../../assets/chevron-left.svg?react';
-import ChevronRight from '../../assets/chevron-right.svg?react';
 import { useAnimate } from 'framer-motion';
 import { IExercise } from '../../types';
 import NoSleep from '@marsgames/nosleep.js';
+import exerciseStartSound from '../../assets/exercise-start.mp3';
+import exerciseEndSound from '../../assets/exercise-end.mp3';
+import ChevronLeft from '../../assets/chevron-left.svg?react';
+import ChevronRight from '../../assets/chevron-right.svg?react';
 
 const noSleep = new NoSleep(true);
 const exercisePrepDuration = 2000;
@@ -70,7 +70,7 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
 
   const switchTimerRef = useRef<NodeJS.Timeout>();
   useEffect(() => {
-    if (!isStarted || isFinished) return;
+    if (!isStarted || isPaused || isFinished) return;
     reset();
     switchTimerRef.current = setTimeout(
       () => {
@@ -84,12 +84,13 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
     };
   }, [
     isStarted,
+    isFinished,
+    isPaused,
     exerciseIndex,
     reset,
     start,
     currentExercise.type,
     playExerciseStartSound,
-    isFinished,
   ]);
 
   const handlePreviousClick = useCallback(() => {
