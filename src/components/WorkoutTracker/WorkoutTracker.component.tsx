@@ -26,7 +26,10 @@ const noSleep = new NoSleep(true);
 const exercisePrepDuration = 2000;
 
 const WorkoutTracker = (props: IWorkoutTrackerProps) => {
-  const { data, onFinished, onQuit } = { ...defaultProps, ...props };
+  const { data, onFinished, onQuit, finishButtonText, finishMessage } = {
+    ...defaultProps,
+    ...props,
+  };
   const exerciseList = useMemo(
     () =>
       new Array<IExercise[]>(data.rounds).fill(data.exercises).flatMap((exercises, roundIndex) => {
@@ -173,7 +176,7 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
             {(exerciseIndex + 1) % (data.exercises.length + 1) !== 0 && (
               <p className="text-foreground font-medium text-lg">{`Round ${currentRound}`}</p>
             )}
-            <h2 className="text-foreground font-semibold text-3xl mt-auto">
+            <h2 className="text-foreground font-semibold text-2xl mt-auto text-center">
               {isPaused ? 'Paused' : currentExercise.description}
             </h2>
           </div>
@@ -215,9 +218,9 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
         </>
       ) : (
         <div className="w-full h-80 mb-4 flex flex-col gap-unit-lg items-center justify-center">
-          <p className="text-foreground text-center text-4xl font-medium">Workout finished!</p>
+          <p className="text-foreground text-center text-4xl font-medium">{finishMessage}</p>
           <Button variant="solid" color="success" size="lg" onPress={onFinished}>
-            Go to workout details
+            {finishButtonText}
           </Button>
         </div>
       )}

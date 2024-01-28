@@ -15,7 +15,7 @@ export interface IWarmup {
 export interface IWorkout {
   description: string;
   exercises: IExercise[];
-  warmup?: IWarmup;
   rounds: number;
   restBetweenRounds: number;
+  warmup?: IWarmup;
 }
