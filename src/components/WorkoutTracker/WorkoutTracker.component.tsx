@@ -233,7 +233,8 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
             <ChevronLeft className="h-unit-md w-unit-md fill-foreground" />
           </Button>
           <Progress
-            aria-label="Loading..."
+            size="md"
+            aria-label="Overall progress"
             color={
               exerciseIndex === exerciseList.length
                 ? 'success'
@@ -243,9 +244,9 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
                     ? 'primary'
                     : 'danger'
             }
-            value={exerciseIndex / exerciseList.length}
+            // this is a bug of next ui thus a trick is applied
+            value={Math.max(0.001, exerciseIndex / exerciseList.length)}
             maxValue={1}
-            size="md"
           />
           <Button
             variant="light"
