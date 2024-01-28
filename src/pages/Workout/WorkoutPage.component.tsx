@@ -44,6 +44,28 @@ const workout: IWorkout = {
       quantity: 3,
     },
   ],
+  warmup: {
+    description: 'Warmup',
+    rounds: 1,
+    restBetweenRounds: 0,
+    exercises: [
+      {
+        description: 'Jumping Jacks',
+        quantity: 3,
+        type: 'exercise',
+      },
+      {
+        type: 'rest',
+        description: 'Rest',
+        quantity: 4,
+      },
+      {
+        description: 'Arm Circles',
+        quantity: 3,
+        type: 'exercise',
+      },
+    ],
+  },
 };
 
 type WorkoutMode = 'idle' | 'workout' | 'warmup';
@@ -63,7 +85,7 @@ const WorkoutPage = () => {
     <div className="py-unit-2xl h-full">
       <section className="h-full min-h-[500px] flex justify-center items-center flex-col px-unit-md">
         {mode === 'workout' ? (
-          <WorkoutTracker data={workout} onFinished={handleFinished} />
+          <WorkoutTracker data={workout} onFinished={handleFinished} onQuit={handleFinished} />
         ) : (
           <>
             <h2>{workout.description}</h2>

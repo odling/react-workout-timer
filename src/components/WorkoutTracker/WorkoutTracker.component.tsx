@@ -1,5 +1,5 @@
 import IWorkoutTrackerProps from './WorkoutTracker.interface';
-import { Button, CircularProgress, Progress } from '@nextui-org/react';
+import {} from '@nextui-org/react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useCountdownTimer } from '../../hooks';
 import useSound from 'use-sound';
@@ -10,12 +10,23 @@ import exerciseStartSound from '../../assets/exercise-start.mp3';
 import exerciseEndSound from '../../assets/exercise-end.mp3';
 import ChevronLeft from '../../assets/chevron-left.svg?react';
 import ChevronRight from '../../assets/chevron-right.svg?react';
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Button,
+  CircularProgress,
+  Progress,
+  useDisclosure,
+} from '@nextui-org/react';
 
 const noSleep = new NoSleep(true);
 const exercisePrepDuration = 2000;
 
 const WorkoutTracker = (props: IWorkoutTrackerProps) => {
-  const { data, onFinished } = { ...defaultProps, ...props };
+  const { data, onFinished, onQuit } = { ...defaultProps, ...props };
   const exerciseList = useMemo(
     () =>
       new Array<IExercise[]>(data.rounds).fill(data.exercises).flatMap((exercises, roundIndex) => {
@@ -138,11 +149,27 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
     };
   }, [pause]);
 
+  const {
+    isOpen: isQuitModalOpen,
+    onOpen: onQuitModalOpen,
+    onClose: onQuitModalClose,
+  } = useDisclosure();
+
+  const handleQuitClick = useCallback(() => {
+    pause();
+    clearInterval(switchTimerRef.current);
+    onQuitModalOpen();
+  }, []);
+
+  const handleQuitWorkout = useCallback(() => {
+    onQuit();
+  }, []);
+
   return (
     <>
       {exerciseIndex < exerciseList.length ? (
         <>
-          <div className="h-24 w-64 flex flex-col justify-between items-center pb-4">
+          <div className="h-20 w-64 flex flex-col justify-start items-center pb-4">
             {(exerciseIndex + 1) % (data.exercises.length + 1) !== 0 && (
               <p className="text-foreground font-medium text-lg">{`Round ${currentRound}`}</p>
             )}
@@ -153,7 +180,7 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
           <Button
             variant="bordered"
             disableRipple
-            className="w-64 h-64 flex justify-center p-0 border-none"
+            className="w-64 h-64 flex justify-center p-0 border-none outline-1"
             onPress={() => void handleClick()}
           >
             <CircularProgress
@@ -194,7 +221,7 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
           </Button>
         </div>
       )}
-      <div className="w-80 max-w-80 h-24 flex flex-col justify-start items-center">
+      <div className="w-80 max-w-80 h-28 flex flex-col justify-start items-center pt-4">
         <p className="text-foreground font-medium text-lg">{data.description}</p>
         <div className="flex items-center w-full gap-unit-sm">
           <Button
@@ -230,11 +257,33 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
           </Button>
         </div>
         {exerciseIndex < exerciseList.length && (
-          <Button variant="flat" onPress={() => undefined}>
+          <Button variant="flat" size="sm" onPress={handleQuitClick}>
             Quit
           </Button>
         )}
       </div>
+      <Modal
+        size="xs"
+        isOpen={isQuitModalOpen}
+        onClose={onQuitModalClose}
+        backdrop="blur"
+        placement="center"
+      >
+        <ModalContent>
+          <ModalHeader className="flex flex-col gap-1">Are you sure?</ModalHeader>
+          <ModalBody>
+            <p>Are you sure you want to quit?</p>
+          </ModalBody>
+          <ModalFooter>
+            <Button color="danger" variant="light" onPress={handleQuitWorkout}>
+              Quit
+            </Button>
+            <Button color="default" variant="light" onPress={onQuitModalClose}>
+              Close
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </>
   );
 };
