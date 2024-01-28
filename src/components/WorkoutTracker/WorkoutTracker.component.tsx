@@ -124,6 +124,7 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
     if (currentExercise.isRepBased) {
       reset();
       handleNextClick();
+      playExerciseEndSound();
       await animateExerciseEnd();
       return;
     }
@@ -137,6 +138,7 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
     currentExercise.isRepBased,
     handleNextClick,
     animateExerciseEnd,
+    playExerciseEndSound,
     reset,
   ]);
 
