@@ -3,14 +3,15 @@ import { Button, CircularProgress, Progress } from '@nextui-org/react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useCountdownTimer } from '../../hooks';
 import exerciseStartSound from '../../assets/exercise-start.mp3';
+import exerciseEndSound from '../../assets/exercise-end.mp3';
 import useSound from 'use-sound';
 import ChevronLeft from '../../assets/chevron-left.svg?react';
 import ChevronRight from '../../assets/chevron-right.svg?react';
 import { useAnimate } from 'framer-motion';
 import { IExercise } from '../../types';
-import NoSleep from 'nosleep.js';
+// import NoSleep from '@zakj/no-sleep';
 
-const noSleep = new NoSleep();
+// const noSleep = new NoSleep();
 const exercisePrepDuration = 2000;
 
 const WorkoutTracker = (props: IWorkoutTrackerProps) => {
@@ -39,11 +40,8 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
   const [isStarted, setIsStarted] = useState(false);
   const isFinished = exerciseIndex === exerciseList.length;
 
-  // const [isStartSoundLoaded, setIsStartSoundLoaded] = useState(false);
-  // const handleStartSoundLoaded = useCallback(() => {
-  //   setIsStartSoundLoaded(true);
-  // }, []);
   const [playExerciseStartSound] = useSound(exerciseStartSound);
+  const [playExerciseEndSound] = useSound(exerciseEndSound);
 
   const [scope, animate] = useAnimate();
   const animateExerciseEnd = useCallback(
@@ -58,9 +56,10 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
   const handleExpire = useCallback(async () => {
     if (exerciseIndex < exerciseList.length) {
       setExerciseIndex(exerciseIndex + 1);
+      playExerciseEndSound();
       await animateExerciseEnd();
     }
-  }, [exerciseIndex, exerciseList.length, animateExerciseEnd]);
+  }, [exerciseIndex, exerciseList.length, animateExerciseEnd, playExerciseEndSound]);
 
   const { countdown, start, reset, pause, isRunning, isPaused } = useCountdownTimer({
     timer: currentExercise.isRepBased ? 9999 : currentExercise.quantity,
@@ -91,7 +90,6 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
     currentExercise.type,
     playExerciseStartSound,
     isFinished,
-    // isStartSoundLoaded,
   ]);
 
   const handlePreviousClick = useCallback(() => {
@@ -138,13 +136,13 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
   ]);
 
   useEffect(() => {
-    const handleStayAwake = async () => {
-      // await noSleep.enable();
+    const handleStayAwake = () => {
+      // noSleep.enable();
     };
-    void handleStayAwake();
+    handleStayAwake();
     window.addEventListener('blur', pause);
     return () => {
-      noSleep.disable();
+      // noSleep.disable();
       window.removeEventListener('blur', pause);
     };
   }, [pause]);
