@@ -214,7 +214,7 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
           </Button>
         </>
       ) : (
-        <div className="w-full h-80 mb-8 flex flex-col gap-unit-lg items-center justify-center">
+        <div className="w-full h-80 mb-4 flex flex-col gap-unit-lg items-center justify-center">
           <p className="text-foreground text-center text-4xl font-medium">Workout finished!</p>
           <Button variant="solid" color="success" size="lg" onPress={onFinished}>
             Go to workout details
