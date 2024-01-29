@@ -151,25 +151,25 @@ type WorkoutMode = 'idle' | 'workout' | 'warmup';
 const WorkoutPage = () => {
   const [mode, setMode] = useState<WorkoutMode>('idle');
 
-  const handleStartWorkout = useCallback(() => {
-    onWarmupModalClose();
-    setMode('workout');
-  }, []);
-
-  const handleStartWarmup = useCallback(() => {
-    onWarmupModalClose();
-    setMode('warmup');
-  }, []);
-
-  const handleFinished = useCallback(() => {
-    setMode('idle');
-  }, []);
-
   const {
     isOpen: isWarmupModalOpen,
     onOpen: onWarmupModalOpen,
     onClose: onWarmupModalClose,
   } = useDisclosure();
+
+  const handleStartWorkout = useCallback(() => {
+    onWarmupModalClose();
+    setMode('workout');
+  }, [onWarmupModalClose]);
+
+  const handleStartWarmup = useCallback(() => {
+    onWarmupModalClose();
+    setMode('warmup');
+  }, [onWarmupModalClose]);
+
+  const handleFinished = useCallback(() => {
+    setMode('idle');
+  }, []);
 
   return (
     <>

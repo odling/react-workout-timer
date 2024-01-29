@@ -79,6 +79,12 @@ export interface ICountdownTimerParams {
    */
   resetOnExpire?: boolean;
   /**
+   * Callback fired when countdown reached zero.
+   * It is not called when expireImmediate is true.
+   * onExpire should be used in that case.
+   */
+  onZeroReached?: () => void | Promise<void>;
+  /**
    * Callback fired on countdown expiration.
    */
   onExpire?: () => void | Promise<void>;
@@ -126,6 +132,7 @@ export default function useCountdownTimer({
   autostart = false,
   expireImmediate = false,
   resetOnExpire = true,
+  onZeroReached,
   onExpire,
   onReset,
 }: ICountdownTimerParams): ICountdownTimerResults {
@@ -164,9 +171,13 @@ export default function useCountdownTimer({
 
   useEffect(() => {
     function tick() {
-      if (state.countdown <= 0 || (expireImmediate && state.countdown - interval <= 0)) {
+      const isNextTickZero = state.countdown - interval <= 0;
+      if (state.countdown <= 0 || (expireImmediate && isNextTickZero)) {
         expire();
       } else {
+        if (isNextTickZero && onZeroReached && typeof onZeroReached === 'function') {
+          void onZeroReached();
+        }
         dispatch({ type: 'TICK', payload: interval });
       }
     }
@@ -178,6 +189,7 @@ export default function useCountdownTimer({
     return () => clearInterval(id);
   }, [
     expire,
+    onZeroReached,
     expireImmediate,
     interval,
     state.canTick,

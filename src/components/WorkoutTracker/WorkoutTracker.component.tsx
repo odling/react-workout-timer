@@ -66,18 +66,22 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
     [animate],
   );
 
+  const handleZeroReached = useCallback(() => {
+    playExerciseEndSound();
+  }, [playExerciseEndSound]);
+
   const handleExpire = useCallback(async () => {
     if (exerciseIndex < exerciseList.length) {
       setExerciseIndex(exerciseIndex + 1);
-      playExerciseEndSound();
       await animateExerciseEnd();
     }
-  }, [exerciseIndex, exerciseList.length, animateExerciseEnd, playExerciseEndSound]);
+  }, [exerciseIndex, exerciseList.length, animateExerciseEnd]);
 
   const { countdown, start, reset, pause, isRunning, isPaused } = useCountdownTimer({
     timer: currentExercise.isRepBased ? 9999 : currentExercise.quantity,
     resetOnExpire: false,
     expireImmediate: false,
+    onZeroReached: handleZeroReached,
     onExpire: handleExpire,
   });
 
@@ -164,11 +168,11 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
     pause();
     clearInterval(switchTimerRef.current);
     onQuitModalOpen();
-  }, []);
+  }, [onQuitModalOpen, pause]);
 
   const handleQuitWorkout = useCallback(() => {
     onQuit();
-  }, []);
+  }, [onQuit]);
 
   return (
     <>
