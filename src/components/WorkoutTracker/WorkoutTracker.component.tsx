@@ -176,101 +176,103 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
 
   return (
     <>
-      {exerciseIndex < exerciseList.length ? (
-        <>
-          <div className="h-20 w-64 flex flex-col justify-start items-center pb-4">
-            {(exerciseIndex + 1) % (data.exercises.length + 1) !== 0 && (
-              <p className="text-foreground font-medium text-lg">{`Round ${currentRound}`}</p>
-            )}
-            <h2 className="text-foreground font-semibold text-2xl mt-auto text-center">
-              {isPaused ? 'Paused' : currentExercise.description}
-            </h2>
+      <div className="w-full h-full flex flex-col justify-center items-center">
+        {exerciseIndex < exerciseList.length ? (
+          <>
+            <div className="h-20 w-64 flex flex-col justify-start items-center pb-4">
+              {(exerciseIndex + 1) % (data.exercises.length + 1) !== 0 && (
+                <p className="text-foreground font-medium text-lg">{`Round ${currentRound}`}</p>
+              )}
+              <h2 className="text-foreground font-semibold text-2xl mt-auto text-center">
+                {isPaused ? 'Paused' : currentExercise.description}
+              </h2>
+            </div>
+            <Button
+              variant="bordered"
+              disableRipple
+              className="w-64 h-64 flex justify-center p-0 border-none outline-1"
+              onPress={() => void handleClick()}
+            >
+              <CircularProgress
+                ref={scope}
+                aria-label="Remaining duration"
+                classNames={{
+                  svg: `w-full h-full drop-shadow-md stroke-1 scale-x-flip`,
+                  track: 'stroke-white/10',
+                  value: 'text-2xl md:text-3xl font-semibold text-foreground',
+                }}
+                color={
+                  !isRunning ? 'default' : currentExercise.type === 'rest' ? 'primary' : 'success'
+                }
+                value={currentExercise.isRepBased ? 1 : countdown / currentExercise.quantity}
+                valueLabel={
+                  !isStarted || isPaused || (!isRunning && currentExercise.type !== 'rest') ? (
+                    <p className="w-full h-full text-foreground text-2xl font-medium italic flex items-center justify-center select-none">
+                      {!isStarted ? 'Tap to start' : isPaused ? 'Tap to continue' : 'Get ready!'}
+                    </p>
+                  ) : (
+                    <p className="w-full h-full text-foreground text-3xl font-medium flex items-center justify-center select-none">
+                      {currentExercise.isRepBased
+                        ? `${currentExercise.quantity} reps`
+                        : String(countdown)}
+                    </p>
+                  )
+                }
+                maxValue={1}
+                showValueLabel
+              />
+            </Button>
+          </>
+        ) : (
+          <div className="w-full h-80 mb-4 flex flex-col gap-unit-lg items-center justify-center">
+            <p className="text-foreground text-center text-4xl font-medium">{finishMessage}</p>
+            <Button variant="solid" color="success" size="lg" onPress={onFinished}>
+              {finishButtonText}
+            </Button>
           </div>
-          <Button
-            variant="bordered"
-            disableRipple
-            className="w-64 h-64 flex justify-center p-0 border-none outline-1"
-            onPress={() => void handleClick()}
-          >
-            <CircularProgress
-              ref={scope}
-              aria-label="Remaining duration"
-              classNames={{
-                svg: `w-full h-full drop-shadow-md stroke-1 scale-x-flip`,
-                track: 'stroke-white/10',
-                value: 'text-2xl md:text-3xl font-semibold text-foreground',
-              }}
-              color={
-                !isRunning ? 'default' : currentExercise.type === 'rest' ? 'primary' : 'success'
-              }
-              value={currentExercise.isRepBased ? 1 : countdown / currentExercise.quantity}
-              valueLabel={
-                !isStarted || isPaused || (!isRunning && currentExercise.type !== 'rest') ? (
-                  <p className="w-full h-full text-foreground text-2xl font-medium italic flex items-center justify-center select-none">
-                    {!isStarted ? 'Tap to start' : isPaused ? 'Tap to continue' : 'Get ready!'}
-                  </p>
-                ) : (
-                  <p className="w-full h-full text-foreground text-3xl font-medium flex items-center justify-center select-none">
-                    {currentExercise.isRepBased
-                      ? `${currentExercise.quantity} reps`
-                      : String(countdown)}
-                  </p>
-                )
-              }
-              maxValue={1}
-              showValueLabel
-            />
-          </Button>
-        </>
-      ) : (
-        <div className="w-full h-80 mb-4 flex flex-col gap-unit-lg items-center justify-center">
-          <p className="text-foreground text-center text-4xl font-medium">{finishMessage}</p>
-          <Button variant="solid" color="success" size="lg" onPress={onFinished}>
-            {finishButtonText}
-          </Button>
-        </div>
-      )}
-      <div className="w-80 max-w-80 h-28 flex flex-col justify-start items-center pt-4">
-        <p className="text-foreground font-medium text-lg">{data.description}</p>
-        <div className="flex items-center w-full gap-unit-sm">
-          <Button
-            variant="light"
-            isIconOnly
-            onPress={handlePreviousClick}
-            isDisabled={!isStarted || exerciseIndex === 0}
-          >
-            <ChevronLeft className="h-unit-md w-unit-md fill-foreground" />
-          </Button>
-          <Progress
-            size="md"
-            aria-label="Overall progress"
-            color={
-              exerciseIndex === exerciseList.length
-                ? 'success'
-                : !isRunning
-                  ? 'default'
-                  : currentExercise.type === 'rest'
-                    ? 'primary'
-                    : 'success'
-            }
-            // this is a bug of next ui thus a trick is applied
-            value={Math.max(0.0001, exerciseIndex / exerciseList.length)}
-            maxValue={1}
-          />
-          <Button
-            variant="light"
-            isIconOnly
-            onPress={handleNextClick}
-            isDisabled={!isStarted || exerciseIndex === exerciseList.length}
-          >
-            <ChevronRight className="h-unit-md w-unit-md fill-foreground" />
-          </Button>
-        </div>
-        {exerciseIndex < exerciseList.length && (
-          <Button variant="flat" size="sm" onPress={handleQuitClick}>
-            Quit
-          </Button>
         )}
+        <div className="w-80 max-w-80 h-28 flex flex-col justify-start items-center pt-4">
+          <p className="text-foreground font-medium text-lg">{data.description}</p>
+          <div className="flex items-center w-full gap-unit-sm">
+            <Button
+              variant="light"
+              isIconOnly
+              onPress={handlePreviousClick}
+              isDisabled={!isStarted || exerciseIndex === 0}
+            >
+              <ChevronLeft className="h-unit-md w-unit-md fill-foreground" />
+            </Button>
+            <Progress
+              size="md"
+              aria-label="Overall progress"
+              color={
+                exerciseIndex === exerciseList.length
+                  ? 'success'
+                  : !isRunning
+                    ? 'default'
+                    : currentExercise.type === 'rest'
+                      ? 'primary'
+                      : 'success'
+              }
+              // this is a bug of next ui thus a trick is applied
+              value={Math.max(0.0001, exerciseIndex / exerciseList.length)}
+              maxValue={1}
+            />
+            <Button
+              variant="light"
+              isIconOnly
+              onPress={handleNextClick}
+              isDisabled={!isStarted || exerciseIndex === exerciseList.length}
+            >
+              <ChevronRight className="h-unit-md w-unit-md fill-foreground" />
+            </Button>
+          </div>
+          {exerciseIndex < exerciseList.length && (
+            <Button variant="flat" size="sm" onPress={handleQuitClick}>
+              Quit
+            </Button>
+          )}
+        </div>
       </div>
       <Modal
         size="xs"
