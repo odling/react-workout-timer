@@ -4,13 +4,22 @@ import { useNavigate } from 'react-router';
 const HomePage = () => {
   const navigate = useNavigate();
   return (
-    <div className="page-wrapper">
-      <h1 className="text-foreground font-semibold text-3xl text-center">Welcome</h1>
-      <div className="w-full h-full flex justify-center items-center">
-        <Button size="lg" variant="solid" color="success" onPress={() => navigate('workouts')}>
-          See all workouts
-        </Button>
-      </div>
+    <div className="w-full h-full flex flex-col justify-center items-center gap-unit-xl from-primary to-success bg-gradient-to-br bg-clip-text text-xl text-center px-unit-md">
+      <h1 className="text-transparent font-semibold text-3xl mt-unit-xl">Welcome</h1>
+      <p className="text-transparent">Ready to transform your body?</p>
+      <p className="text-transparent">
+        This app is designed to help you achieve your goals. Just follow the workouts and remember,
+        hard work pays off.
+      </p>
+      <p className="text-transparent">Hard work pays off...</p>
+      <Button
+        size="lg"
+        variant="light"
+        onPress={() => navigate('workouts')}
+        className="bg-gradient-to-l bg-clip-text from-success to-primary"
+      >
+        <span className="text-transparent">See all workouts</span>
+      </Button>
     </div>
   );
 };
