@@ -13,6 +13,7 @@ export interface IWarmup {
 }
 
 export interface IWorkout {
+  id: string;
   description: string;
   exercises: IExercise[];
   rounds: number;

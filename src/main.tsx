@@ -6,7 +6,7 @@ import { NextUIProvider } from '@nextui-org/react';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <NextUIProvider className="h-full">
+    <NextUIProvider className="h-full flex justify-center">
       <App />
     </NextUIProvider>
   </React.StrictMode>,

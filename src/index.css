@@ -13,3 +13,9 @@
     @apply h-full;
   }
 }
+
+@layer components {
+  .page-wrapper {
+    @apply h-full min-h-[500px] flex items-center flex-col px-unit-md py-unit-lg md:py-unit-xl lg:py-unit-2xl;
+  }
+}

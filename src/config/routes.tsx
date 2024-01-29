@@ -1,16 +1,33 @@
 import { createBrowserRouter } from 'react-router-dom';
 import { MainLayout } from '../components';
-import WorkoutPage from '../pages';
+import { WorkoutsPage, WorkoutDetailsPage, HomePage } from '../pages';
 
 export const appRouter = createBrowserRouter([
   {
     path: '/',
     element: <MainLayout />,
+    errorElement: <MainLayout />,
     children: [
       {
-        id: 'workout',
         index: true,
-        element: <WorkoutPage />,
+        id: 'home',
+        element: <HomePage />,
+      },
+      {
+        path: '/workouts',
+        element: null,
+        children: [
+          {
+            index: true,
+            id: 'workouts',
+            element: <WorkoutsPage />,
+          },
+          {
+            id: 'workoutDetails',
+            path: '/workouts/:workoutId',
+            element: <WorkoutDetailsPage />,
+          },
+        ],
       },
     ],
   },

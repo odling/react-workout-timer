@@ -254,7 +254,7 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
                     : 'success'
             }
             // this is a bug of next ui thus a trick is applied
-            value={Math.max(0.001, exerciseIndex / exerciseList.length)}
+            value={Math.max(0.0001, exerciseIndex / exerciseList.length)}
             maxValue={1}
           />
           <Button
