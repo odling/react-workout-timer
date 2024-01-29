@@ -197,7 +197,7 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
                 value: 'text-2xl md:text-3xl font-semibold text-foreground',
               }}
               color={
-                !isRunning ? 'default' : currentExercise.type === 'rest' ? 'primary' : 'danger'
+                !isRunning ? 'default' : currentExercise.type === 'rest' ? 'primary' : 'success'
               }
               value={currentExercise.isRepBased ? 1 : countdown / currentExercise.quantity}
               valueLabel={
@@ -247,7 +247,7 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
                   ? 'default'
                   : currentExercise.type === 'rest'
                     ? 'primary'
-                    : 'danger'
+                    : 'success'
             }
             // this is a bug of next ui thus a trick is applied
             value={Math.max(0.001, exerciseIndex / exerciseList.length)}
@@ -281,7 +281,7 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
             <p>Are you sure you want to quit?</p>
           </ModalBody>
           <ModalFooter>
-            <Button color="danger" variant="light" onPress={handleQuitWorkout}>
+            <Button color="danger" variant="solid" onPress={handleQuitWorkout}>
               Quit
             </Button>
             <Button color="default" variant="light" onPress={onQuitModalClose}>

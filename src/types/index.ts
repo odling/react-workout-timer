@@ -18,4 +18,5 @@ export interface IWorkout {
   rounds: number;
   restBetweenRounds: number;
   warmup?: IWarmup;
+  useDefaultWarmup: boolean;
 }

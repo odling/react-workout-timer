@@ -9,13 +9,68 @@ import {
   ModalBody,
   ModalHeader,
   ModalFooter,
+  Card,
+  CardBody,
+  ScrollShadow,
+  Divider,
 } from '@nextui-org/react';
 
 const workout: IWorkout = {
   rounds: 3,
   restBetweenRounds: 5,
   description: 'Week 1 - Upper Body',
+  useDefaultWarmup: true,
   exercises: [
+    {
+      type: 'exercise',
+      description: 'Chinups',
+      quantity: 10,
+      isRepBased: true,
+    },
+    {
+      type: 'rest',
+      description: 'Rest',
+      quantity: 30,
+    },
+    {
+      type: 'exercise',
+      description: 'Regular Pushups',
+      quantity: 15,
+      isRepBased: true,
+    },
+    {
+      type: 'rest',
+      description: 'Rest',
+      quantity: 30,
+    },
+    {
+      type: 'exercise',
+      description: '90 Degree Pullup Holds',
+      quantity: 15,
+    },
+    {
+      type: 'rest',
+      description: 'Rest',
+      quantity: 35,
+    },
+    {
+      type: 'exercise',
+      description: 'Reverse Chair Dips',
+      quantity: 15,
+      isRepBased: true,
+    },
+    {
+      type: 'rest',
+      description: 'Rest',
+      quantity: 45,
+    },
+    {
+      type: 'exercise',
+      description: 'Shoulder Press Ups',
+      quantity: 10,
+      isRepBased: true,
+    },
+
     {
       type: 'exercise',
       description: 'Chinups',
@@ -117,14 +172,14 @@ const WorkoutPage = () => {
   } = useDisclosure();
 
   return (
-    <div className="py-unit-2xl h-full">
+    <>
       <section className="h-full min-h-[500px] flex justify-center items-center flex-col px-unit-md">
         {mode === 'warmup' ? (
           <WorkoutTracker
             key={'warmupTracker'}
             finishMessage="Warmup finished!"
             finishButtonText="Start workout"
-            data={defaultWarmup}
+            data={workout.useDefaultWarmup ? defaultWarmup : workout.warmup ?? defaultWarmup}
             onFinished={handleStartWorkout}
             onQuit={handleStartWorkout}
           />
@@ -138,12 +193,64 @@ const WorkoutPage = () => {
             onQuit={handleFinished}
           />
         ) : (
-          <>
-            <h2>{workout.description}</h2>
-            <Button variant="solid" color="success" size="lg" onPress={onWarmupModalOpen}>
+          <div className="h-full w-full md:w-80 lg:w-96 flex flex-col items-center">
+            <ScrollShadow className="w-full" hideScrollBar size={50}>
+              <h1 className="text-foreground font-semibold text-3xl text-center">
+                {workout.description}
+              </h1>
+              <div className="columns-3 mt-unit-md text-foreground">
+                <div className="flex flex-col items-center">
+                  <span className="font-normal text-xs">Exercises</span>
+                  <span className="font-bold text-xl">{workout.exercises.length}</span>
+                </div>
+                <div className="flex flex-col items-center  ">
+                  <span className="font-normal text-xs">Rounds</span>
+                  <span className="font-bold text-xl">{workout.rounds}</span>
+                </div>
+                <div className="flex flex-col items-center">
+                  <span className="font-normal text-xs">Rest Between</span>
+                  <span className="font-bold text-xl">{`${workout.restBetweenRounds}s`}</span>
+                </div>
+              </div>
+              <Divider className="my-unit-md" />
+              <ul className="flex-1 flex flex-col gap-unit-md px-unit-sm pb-unit-xs">
+                {workout.exercises.map((exercise, index) => {
+                  return (
+                    <li key={index}>
+                      <Card shadow="sm" radius="md">
+                        <CardBody>
+                          <div className="w-full flex justify-between items-center text-foreground gap-unit-sm">
+                            <p className="font-bold text-md break-all">{exercise.description}</p>
+                            <div className="flex flex-col items-center">
+                              <span
+                                className={`font-semibold text-md text-${exercise.type === 'exercise' ? 'success' : 'primary'}`}
+                              >
+                                {exercise.quantity}
+                              </span>
+                              <span className="font-normal text-xs">
+                                {exercise.isRepBased ? 'Reps' : 'Sec'}
+                              </span>
+                            </div>
+                          </div>
+                        </CardBody>
+                      </Card>
+                    </li>
+                  );
+                })}
+              </ul>
+            </ScrollShadow>
+            <Divider className="my-unit-md" />
+            <Button
+              fullWidth
+              className="mt-auto min-h-unit-xl"
+              variant="solid"
+              size="md"
+              color="success"
+              onPress={onWarmupModalOpen}
+            >
               Go to workout
             </Button>
-          </>
+          </div>
         )}
       </section>
       <Modal
@@ -159,16 +266,16 @@ const WorkoutPage = () => {
             <p>Do you want to warmup first?</p>
           </ModalBody>
           <ModalFooter>
-            <Button color="success" variant="light" onPress={handleStartWarmup}>
-              Ok
+            <Button color="success" variant="solid" onPress={handleStartWarmup}>
+              Yes
             </Button>
             <Button color="default" variant="light" onPress={handleStartWorkout}>
-              Skip
+              Skip Warmup
             </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
-    </div>
+    </>
   );
 };
 
