@@ -9,9 +9,8 @@ const HomePage = () => {
       <p className="text-transparent">Ready to transform your body?</p>
       <p className="text-transparent">
         This app is designed to help you achieve your goals. Just follow the workouts and remember,
-        hard work pays off.
       </p>
-      <p className="text-transparent">Hard work pays off...</p>
+      <p className="text-transparent">Hard work pays off!</p>
       <Button
         size="lg"
         variant="light"
