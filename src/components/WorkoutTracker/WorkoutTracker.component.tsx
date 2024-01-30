@@ -228,8 +228,10 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
             <p className="text-foreground text-center text-4xl font-medium">{finishMessage}</p>
           </div>
         )}
-        <div className="w-80 max-w-80 h-28 flex flex-col justify-start items-center pt-4">
-          <p className="text-foreground font-medium text-lg">{data.description}</p>
+        <div className="w-80 max-w-80 h-28 flex flex-col justify-start items-center pt-4 overflow-hidden">
+          <p className="text-foreground font-medium text-lg line-clamp-1 text-ellipsis">
+            {data.description}
+          </p>
           <div className="flex items-center w-full gap-unit-sm">
             <Button
               variant="light"

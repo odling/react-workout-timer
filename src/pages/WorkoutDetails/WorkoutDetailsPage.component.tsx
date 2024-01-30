@@ -70,27 +70,27 @@ const WorkoutDetailsPage = () => {
             />
           ) : (
             <div className="h-full w-full md:w-[80%] lg:w-[50%] flex flex-col items-center">
-              <ScrollShadow className="w-full flex-1" hideScrollBar size={40}>
-                <h1 className="text-foreground font-semibold text-3xl text-center">
-                  {workout.description}
-                </h1>
-                <div className="columns-3 mt-unit-md text-foreground">
-                  <div className="flex flex-col items-center">
-                    <span className="font-normal text-xs">Exercises</span>
-                    <span className="font-bold text-xl">
-                      {workout.exercises.filter((exercise) => exercise.type === 'exercise').length}
-                    </span>
-                  </div>
-                  <div className="flex flex-col items-center  ">
-                    <span className="font-normal text-xs">Rounds</span>
-                    <span className="font-bold text-xl">{workout.rounds}</span>
-                  </div>
-                  <div className="flex flex-col items-center">
-                    <span className="font-normal text-xs">Rest Between</span>
-                    <span className="font-bold text-xl">{`${workout.restBetweenRounds}s`}</span>
-                  </div>
+              <h1 className="text-foreground font-semibold text-3xl text-center line-clamp-2 text-ellipsis">
+                {workout.description}
+              </h1>
+              <div className="columns-3 mt-unit-md text-foreground">
+                <div className="flex flex-col items-center">
+                  <span className="font-normal text-xs">Exercises</span>
+                  <span className="font-bold text-xl">
+                    {workout.exercises.filter((exercise) => exercise.type === 'exercise').length}
+                  </span>
                 </div>
-                <Divider className="my-unit-md" />
+                <div className="flex flex-col items-center  ">
+                  <span className="font-normal text-xs">Rounds</span>
+                  <span className="font-bold text-xl">{workout.rounds}</span>
+                </div>
+                <div className="flex flex-col items-center">
+                  <span className="font-normal text-xs">Rest Between</span>
+                  <span className="font-bold text-xl">{`${workout.restBetweenRounds}s`}</span>
+                </div>
+              </div>
+              <Divider className="my-unit-md" />
+              <ScrollShadow className="w-full flex-1" hideScrollBar size={40}>
                 <ul className="flex-1 flex flex-col gap-unit-md px-unit-sm pb-unit-xs">
                   {workout.exercises.map((exercise, index) => {
                     return (

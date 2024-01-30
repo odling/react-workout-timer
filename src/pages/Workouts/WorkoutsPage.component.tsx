@@ -24,7 +24,7 @@ const WorkoutsPage = () => {
                   <CardBody>
                     <div className="w-full flex justify-between items-center text-foreground gap-unit-sm">
                       <p className="font-bold text-md break-all">{workout.description}</p>
-                      <p className="font-bold text-md text-danger ml-auto">{`${workout.rounds}x`}</p>
+                      <p className="font-bold text-md text-success ml-auto">{`${workout.rounds}x`}</p>
                       <div className="flex flex-col items-center">
                         <span className={`font-semibold text-md text-foreground`}>
                           {
