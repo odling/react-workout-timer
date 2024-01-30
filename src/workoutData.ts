@@ -7,17 +7,42 @@ export const defaultWarmup: IWarmup = {
   exercises: [
     {
       description: 'Jumping Jacks',
-      quantity: 3,
+      quantity: 45,
       type: 'exercise',
     },
     {
-      type: 'rest',
-      description: 'Rest',
-      quantity: 4,
+      description: 'Front Kick Squats',
+      quantity: 30,
+      type: 'exercise',
     },
     {
-      description: 'Arm Circles',
-      quantity: 3,
+      description: 'Lunges Rotation',
+      quantity: 30,
+      type: 'exercise',
+    },
+    {
+      description: 'Mountain Climber Twist',
+      quantity: 30,
+      type: 'exercise',
+    },
+    {
+      description: 'Walking Kicks',
+      quantity: 30,
+      type: 'exercise',
+    },
+    {
+      description: 'Arm Circles Forward',
+      quantity: 15,
+      type: 'exercise',
+    },
+    {
+      description: 'Arm Circles Backwards',
+      quantity: 15,
+      type: 'exercise',
+    },
+    {
+      description: 'Wrist Rotation',
+      quantity: 10,
       type: 'exercise',
     },
   ],

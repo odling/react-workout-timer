@@ -70,7 +70,7 @@ const WorkoutDetailsPage = () => {
             />
           ) : (
             <div className="h-full w-full md:w-[80%] lg:w-[50%] flex flex-col items-center">
-              <h1 className="text-foreground font-semibold text-3xl text-center line-clamp-2 text-ellipsis">
+              <h1 className="text-foreground font-semibold text-3xl text-center line-clamp-2 text-ellipsis break-all">
                 {workout.description}
               </h1>
               <div className="columns-3 mt-unit-md text-foreground">

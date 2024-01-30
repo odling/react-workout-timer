@@ -21,15 +21,16 @@ import {
   Progress,
   useDisclosure,
 } from '@nextui-org/react';
+import appConfig from '../../appConfig';
 
 const noSleep = new NoSleep(true);
-const exercisePrepDuration = 2000;
 
 const WorkoutTracker = (props: IWorkoutTrackerProps) => {
   const { data, onFinished, onQuit, finishButtonText, finishMessage } = {
     ...defaultProps,
     ...props,
   };
+  const { exercisePrepDuration } = appConfig;
   const exerciseList = useMemo(
     () =>
       new Array<IExercise[]>(data.rounds).fill(data.exercises).flatMap((exercises, roundIndex) => {
@@ -94,7 +95,7 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
         start();
         currentExercise.type === 'exercise' && playExerciseStartSound();
       },
-      currentExercise.type === 'exercise' ? exercisePrepDuration : 0,
+      currentExercise.type === 'exercise' ? exercisePrepDuration * 1000 : 0,
     );
     return () => {
       clearInterval(switchTimerRef.current);
@@ -183,7 +184,7 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
               {(exerciseIndex + 1) % (data.exercises.length + 1) !== 0 && (
                 <p className="text-foreground font-medium text-lg">{`Round ${currentRound}`}</p>
               )}
-              <h2 className="text-foreground font-semibold text-2xl mt-auto text-center">
+              <h2 className="min-h-16 text-foreground font-semibold text-2xl text-center line-clamp-2 text-ellipsis break-words">
                 {isPaused ? 'Paused' : currentExercise.description}
               </h2>
             </div>
@@ -229,7 +230,7 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
           </div>
         )}
         <div className="w-80 max-w-80 h-28 flex flex-col justify-start items-center pt-4 overflow-hidden">
-          <p className="text-foreground font-medium text-lg line-clamp-1 text-ellipsis">
+          <p className="text-foreground font-medium text-lg line-clamp-1 text-ellipsis break-all">
             {data.description}
           </p>
           <div className="flex items-center w-full gap-unit-sm">
