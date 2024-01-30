@@ -226,9 +226,6 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
         ) : (
           <div className="w-full h-80 mb-4 flex flex-col gap-unit-lg items-center justify-center">
             <p className="text-foreground text-center text-4xl font-medium">{finishMessage}</p>
-            <Button variant="solid" color="success" size="lg" onPress={onFinished}>
-              {finishButtonText}
-            </Button>
           </div>
         )}
         <div className="w-80 max-w-80 h-28 flex flex-col justify-start items-center pt-4">
@@ -267,9 +264,13 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
               <ChevronRight className="h-unit-md w-unit-md fill-foreground" />
             </Button>
           </div>
-          {exerciseIndex < exerciseList.length && (
+          {exerciseIndex < exerciseList.length ? (
             <Button variant="flat" size="sm" onPress={handleQuitClick}>
               Quit
+            </Button>
+          ) : (
+            <Button variant="flat" color="default" size="sm" onPress={onFinished}>
+              {finishButtonText}
             </Button>
           )}
         </div>
