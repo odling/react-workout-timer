@@ -50,6 +50,60 @@ export const defaultWarmup: IWarmup = {
 
 export const workouts: IWorkout[] = [
   {
+    id: '0',
+    rounds: 3,
+    restBetweenRounds: 60,
+    description: 'Evaluation Test',
+    useDefaultWarmup: true,
+    exercises: [
+      {
+        type: 'exercise',
+        description: 'Pushups',
+        quantity: 60,
+      },
+      {
+        type: 'rest',
+        description: 'Rest',
+        quantity: 60,
+      },
+      {
+        type: 'exercise',
+        description: 'Pullups',
+        quantity: 30,
+      },
+      {
+        type: 'rest',
+        description: 'Rest',
+        quantity: 60,
+      },
+      {
+        type: 'exercise',
+        description: 'Squats',
+        quantity: 60,
+      },
+      {
+        type: 'rest',
+        description: 'Rest',
+        quantity: 60,
+      },
+      {
+        type: 'exercise',
+        description: 'Situps',
+        quantity: 60,
+      },
+      {
+        type: 'rest',
+        description: 'Rest',
+        quantity: 60,
+      },
+      {
+        type: 'exercise',
+        description: 'Dips',
+        quantity: 30,
+      },
+    ],
+  },
+  {
     id: '2',
     rounds: 4,
     restBetweenRounds: 45,
