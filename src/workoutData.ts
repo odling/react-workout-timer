@@ -51,6 +51,75 @@ export const defaultWarmup: IWarmup = {
 export const workouts: IWorkout[] = [
   {
     id: '0',
+    rounds: 5,
+    restBetweenRounds: 90,
+    description: 'Full Body Torture',
+    useDefaultWarmup: true,
+    exercises: [
+      {
+        type: 'exercise',
+        description: 'Jumping Jacks',
+        quantity: 60,
+      },
+      {
+        type: 'rest',
+        description: 'Rest',
+        quantity: 30,
+      },
+      {
+        type: 'exercise',
+        description: 'Dumbell Squats',
+        quantity: 15,
+        isRepBased: true,
+      },
+      {
+        type: 'rest',
+        description: 'Rest',
+        quantity: 30,
+      },
+      {
+        type: 'exercise',
+        description: 'Pullups',
+        quantity: 8,
+        isRepBased: true,
+      },
+      {
+        type: 'rest',
+        description: 'Rest',
+        quantity: 30,
+      },
+      {
+        type: 'exercise',
+        description: 'Staggered Pushups',
+        quantity: 12,
+        isRepBased: true,
+      },
+      {
+        type: 'rest',
+        description: 'Rest',
+        quantity: 30,
+      },
+      {
+        type: 'exercise',
+        description: 'Hanging Hip Raises',
+        quantity: 10,
+        isRepBased: true,
+      },
+      {
+        type: 'rest',
+        description: 'Rest',
+        quantity: 30,
+      },
+      {
+        type: 'exercise',
+        description: 'Dips',
+        quantity: 8,
+        isRepBased: true,
+      },
+    ],
+  },
+  {
+    id: '1',
     rounds: 3,
     restBetweenRounds: 60,
     description: 'Evaluation Test',
