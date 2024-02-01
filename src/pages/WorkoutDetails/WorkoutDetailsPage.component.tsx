@@ -15,6 +15,7 @@ import {
 } from '@nextui-org/react';
 import { defaultWarmup, workouts } from '../../workoutData';
 import { useNavigate, useParams } from 'react-router-dom';
+import path from '../../config/path';
 
 type WorkoutMode = 'idle' | 'workout' | 'warmup';
 
@@ -133,7 +134,7 @@ const WorkoutDetailsPage = () => {
                   variant="light"
                   size="md"
                   color="default"
-                  onPress={() => navigate(-1)}
+                  onPress={() => navigate(path.workouts)}
                 >
                   Back
                 </Button>

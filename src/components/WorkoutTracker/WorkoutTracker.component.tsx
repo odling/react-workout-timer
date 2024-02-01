@@ -100,7 +100,15 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
     return () => {
       clearInterval(switchTimerRef.current);
     };
-  }, [isStarted, exerciseIndex, reset, start, currentExercise.type, playExerciseStartSound]);
+  }, [
+    isStarted,
+    exerciseIndex,
+    reset,
+    start,
+    currentExercise.type,
+    playExerciseStartSound,
+    exercisePrepDuration,
+  ]);
 
   const handlePreviousClick = useCallback(() => {
     if (exerciseIndex <= 0) return;

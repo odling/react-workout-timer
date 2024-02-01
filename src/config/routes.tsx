@@ -1,10 +1,11 @@
 import { createBrowserRouter } from 'react-router-dom';
-import { MainLayout } from '../components';
+import { MainLayout, RequireAuth } from '../components';
 import { WorkoutsPage, WorkoutDetailsPage, HomePage } from '../pages';
+import path from './path';
 
 export const appRouter = createBrowserRouter([
   {
-    path: '/',
+    path: path.home,
     element: <MainLayout />,
     errorElement: <MainLayout />,
     children: [
@@ -14,18 +15,24 @@ export const appRouter = createBrowserRouter([
         element: <HomePage />,
       },
       {
-        path: '/workouts',
-        element: null,
+        id: 'requireAuth',
+        element: <RequireAuth />,
         children: [
           {
-            index: true,
-            id: 'workouts',
-            element: <WorkoutsPage />,
-          },
-          {
-            id: 'workoutDetails',
-            path: '/workouts/:workoutId',
-            element: <WorkoutDetailsPage />,
+            path: path.workouts,
+            element: null,
+            children: [
+              {
+                index: true,
+                id: 'workouts',
+                element: <WorkoutsPage />,
+              },
+              {
+                id: 'workoutDetails',
+                path: `${path.workouts}/:workoutId`,
+                element: <WorkoutDetailsPage />,
+              },
+            ],
           },
         ],
       },

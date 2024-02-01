@@ -1,9 +1,22 @@
 import { Card, ScrollShadow, CardBody, Divider, Button } from '@nextui-org/react';
 import { workouts } from '../../workoutData';
 import { useNavigate } from 'react-router';
+import path from '../../config/path';
+// import { useGetWorkoutsQuery } from '../../redux/features/workoutsApi';
 
 const WorkoutsPage = () => {
   const navigate = useNavigate();
+
+  // useEffect(() => {
+  //   const getWorkouts = async () => {
+  //     const { data } = await supabase.from('workouts').select();
+  //     console.log(data);
+  //   };
+  //   void getWorkouts();
+  // }, []);
+
+  // const { data: workoutData } = useGetWorkoutsQuery();
+
   return (
     <section className="page-wrapper">
       <div className="h-full w-full md:w-[80%] lg:w-[50%] flex flex-col items-center">
@@ -43,7 +56,13 @@ const WorkoutsPage = () => {
         </ScrollShadow>
         <Divider className="my-unit-md" />
         <div className="mt-auto w-full flex flex-col gap-unit-sm">
-          <Button fullWidth variant="light" size="md" color="default" onPress={() => navigate('/')}>
+          <Button
+            fullWidth
+            variant="light"
+            size="md"
+            color="default"
+            onPress={() => navigate(path.home)}
+          >
             Back
           </Button>
         </div>
