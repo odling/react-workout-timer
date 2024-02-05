@@ -9,7 +9,7 @@ import { store } from './redux/store.ts';
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <Provider store={store}>
-      <NextUIProvider className="h-full flex flex-col justify-center">
+      <NextUIProvider className="h-full flex flex-col items-center">
         <App />
       </NextUIProvider>
     </Provider>

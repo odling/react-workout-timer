@@ -1,10 +1,10 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import supabase from '../../api';
 
-const tagTypes = ['Workouts'];
+const tagTypes = ['Workouts', 'Exercises'];
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: String(import.meta.env.VITE_SUPABASE_URL),
+  baseUrl: `${String(import.meta.env.VITE_SUPABASE_URL)}/rest/v1`,
   prepareHeaders: async (headers) => {
     const {
       data: { session },

@@ -16,6 +16,6 @@
 
 @layer components {
   .page-wrapper {
-    @apply h-full min-h-[500px] flex items-center flex-col px-unit-md py-unit-lg md:py-unit-xl lg:py-unit-2xl;
+    @apply w-full md:w-[80%] lg:w-[50%] h-full flex items-center flex-col px-unit-md py-unit-lg md:py-unit-xl lg:py-unit-2xl;
   }
 }

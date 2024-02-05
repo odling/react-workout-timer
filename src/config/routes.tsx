@@ -1,6 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom';
 import { MainLayout, RequireAuth } from '../components';
-import { WorkoutsPage, WorkoutDetailsPage, HomePage } from '../pages';
+import { WorkoutsPage, WorkoutDetailsPage, HomePage, ExercisesPage } from '../pages';
 import path from './path';
 
 export const appRouter = createBrowserRouter([
@@ -33,6 +33,11 @@ export const appRouter = createBrowserRouter([
                 element: <WorkoutDetailsPage />,
               },
             ],
+          },
+          {
+            id: 'exercises',
+            path: path.exercises,
+            element: <ExercisesPage />,
           },
         ],
       },

@@ -14,8 +14,7 @@ import {
   Divider,
 } from '@nextui-org/react';
 import { defaultWarmup, workouts } from '../../workoutData';
-import { useNavigate, useParams } from 'react-router-dom';
-import path from '../../config/path';
+import { useParams } from 'react-router-dom';
 
 type WorkoutMode = 'idle' | 'workout' | 'warmup';
 
@@ -45,8 +44,6 @@ const WorkoutDetailsPage = () => {
     setMode('idle');
   }, []);
 
-  const navigate = useNavigate();
-
   return (
     <>
       {workout && (
@@ -70,7 +67,7 @@ const WorkoutDetailsPage = () => {
               onQuit={handleFinished}
             />
           ) : (
-            <div className="h-full w-full md:w-[80%] lg:w-[50%] flex flex-col items-center">
+            <>
               <h1 className="text-foreground font-semibold text-3xl text-center line-clamp-2 text-ellipsis break-all">
                 {workout.description}
               </h1>
@@ -91,7 +88,7 @@ const WorkoutDetailsPage = () => {
                 </div>
               </div>
               <Divider className="my-unit-md" />
-              <ScrollShadow className="w-full flex-1" hideScrollBar size={40}>
+              <ScrollShadow className="w-full flex-1 min-h-[200px]" hideScrollBar size={40}>
                 <ul className="flex-1 flex flex-col gap-unit-md px-unit-sm pb-unit-xs">
                   {workout.exercises.map((exercise, index) => {
                     return (
@@ -119,27 +116,16 @@ const WorkoutDetailsPage = () => {
                 </ul>
               </ScrollShadow>
               <Divider className="my-unit-md" />
-              <div className="mt-auto w-full flex flex-col gap-unit-sm">
-                <Button
-                  fullWidth
-                  variant="solid"
-                  size="md"
-                  color="success"
-                  onPress={onWarmupModalOpen}
-                >
-                  Go to workout
-                </Button>
-                <Button
-                  fullWidth
-                  variant="light"
-                  size="md"
-                  color="default"
-                  onPress={() => navigate(path.workouts)}
-                >
-                  Back
-                </Button>
-              </div>
-            </div>
+              <Button
+                fullWidth
+                variant="solid"
+                size="md"
+                color="success"
+                onPress={onWarmupModalOpen}
+              >
+                Go to workout
+              </Button>
+            </>
           )}
         </section>
       )}

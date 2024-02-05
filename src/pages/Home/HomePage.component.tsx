@@ -1,43 +1,41 @@
 import { Button, useDisclosure, Modal } from '@nextui-org/react';
 import { useNavigate } from 'react-router';
 import { LoginOrSignup } from '../../components';
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import SessionContext from '../../context';
+import path from '../../config/path';
 
 const HomePage = () => {
-  const navigate = useNavigate();
-
   const { isOpen: isModalOpen, onOpen: onModalOpen, onClose: onModalClose } = useDisclosure();
+  const navigate = useNavigate();
 
   const { currentSession } = useContext(SessionContext);
   const isLoggedIn = !!currentSession;
 
+  useEffect(() => {
+    isLoggedIn && navigate(path.workouts);
+  }, [isLoggedIn, navigate]);
+
   return (
-    <div className="w-full h-full flex flex-col justify-center items-center gap-unit-xl from-primary to-success bg-gradient-to-br bg-clip-text font-semibold text-xl text-center px-unit-md">
-      <h1 className="text-transparent font-bold text-3xl">
-        {'Welcome' + (isLoggedIn ? ` back ${currentSession?.user.user_metadata.display_name}` : '')}
-      </h1>
+    <section className="page-wrapper justify-center gap-unit-xl from-primary to-success bg-gradient-to-br bg-clip-text font-semibold text-xl text-center">
+      <h1 className="text-transparent font-bold text-3xl">Welcome</h1>
       <div className="flex flex-col items-center gap-unit-lg text-transparent">
-        {isLoggedIn ? (
+        <>
           <p>Ready to transform your body?</p>
-        ) : (
-          <>
-            <p>Ready to transform your body?</p>
-            <p>
-              This app is designed to help you achieve your goals. Just follow the workouts and
-              remember,
-            </p>
-            <p>Hard work pays off!</p>
-          </>
-        )}
+          <p>
+            This app is designed to help you achieve your goals. Just follow the workouts and
+            remember,
+          </p>
+          <p>Hard work pays off!</p>
+        </>
       </div>
       <Button
         size="lg"
         variant="faded"
-        onPress={currentSession ? () => navigate('workouts') : onModalOpen}
+        onPress={onModalOpen}
         className="bg-gradient-to-l bg-clip-text from-success to-primary"
       >
-        <span className="text-transparent">{isLoggedIn ? 'See all workouts' : 'Get started'}</span>
+        <span className="text-transparent">Get started</span>
       </Button>
       <Modal
         size="lg"
@@ -48,7 +46,7 @@ const HomePage = () => {
       >
         <LoginOrSignup />
       </Modal>
-    </div>
+    </section>
   );
 };
 

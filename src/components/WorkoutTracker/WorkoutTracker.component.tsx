@@ -183,6 +183,16 @@ const WorkoutTracker = (props: IWorkoutTrackerProps) => {
     onQuit();
   }, [onQuit]);
 
+  useEffect(() => {
+    const footerElement = document.getElementById('footer');
+    if (!footerElement) return;
+    footerElement.style.display = 'none';
+    return () => {
+      if (!footerElement) return;
+      footerElement.style.display = 'initial';
+    };
+  }, []);
+
   return (
     <>
       <div className="w-full h-full flex flex-col justify-center items-center">
